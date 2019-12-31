@@ -38,5 +38,11 @@ module SolidusImporter
 
       self.file = File.open(path, 'r')
     end
+
+    class << self
+      def available_types
+        SolidusImporter::Import.select(:import_type).order(:import_type).group(:import_type).pluck(:import_type)
+      end
+    end
   end
 end

@@ -2,3 +2,15 @@
 Placeholder manifest file.
 the installer will append this file to the app vendored assets here: 'vendor/assets/stylesheets/spree/backend/all.css'
 */
+
+.solidus_importer.state-failed {
+  color: #d00;
+}
+
+.solidus_importer.state-processing {
+  color: #fb1;
+}
+
+.solidus_importer.state-completed {
+  color: #0a0;
+}
