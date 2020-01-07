@@ -10,6 +10,18 @@ AllCops:
     - spec/dummy/**/*
     - vendor/**/*
 
+Rails/ApplicationJob:
+  Enabled: false
+
 Rails/SkipsModelValidations:
   Exclude:
     - db/migrate/**/*
+    - spec/**/*
+
+RSpec/MultipleExpectations:
+  # Default is 1
+  Max: 5
+
+RSpec/NestedGroups:
+  # Default is 3
+  Max: 6
