@@ -6,6 +6,10 @@ module SolidusImporter
     isolate_namespace Spree
     engine_name 'solidus_importer'
 
+    initializer 'solidus_importer.environment', before: :load_config_initializers do |_app|
+      SolidusImporter::Config = SolidusImporter::Configuration.new
+    end
+
     # use rspec for tests
     config.generators do |g|
       g.test_framework(:rspec)
