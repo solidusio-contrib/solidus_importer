@@ -17,6 +17,7 @@ module SolidusImporter
       completed: 'completed'
     }
 
+    scope :created_or_failed, -> { where(state: %i[created failed]) }
     scope :failed_or_completed, -> { where(state: %i[failed completed]) }
 
     validates :data, presence: true, allow_blank: false

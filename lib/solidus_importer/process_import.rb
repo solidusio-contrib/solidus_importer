@@ -13,13 +13,16 @@ module SolidusImporter
       validate!
     end
 
-    def process
+    def process(force_scan: nil)
+      return false unless @import.created_or_failed?
+
+      scan_required = force_scan.nil? ? @import.created? : force_scan
       @import.update(state: :processing)
-      initial_context = scan
+      initial_context = scan_required ? scan : { success: true }
       initial_context = @importer.before_import(initial_context)
-      @import.rows.order(id: :asc).each do |row|
-        ::SolidusImporter::ProcessRow.new(@importer, row).process(initial_context)
-      end
+      rows = process_rows(initial_context)
+      @import.update(state: :completed) if rows.zero?
+      true
     end
 
     private
@@ -47,8 +50,16 @@ module SolidusImporter
       end
     end
 
+    def process_rows(initial_context)
+      rows = @import.rows.created_or_failed.order(id: :asc)
+      rows.each do |row|
+        ::SolidusImporter::ProcessRow.new(@importer, row).process(initial_context)
+      end
+      rows.size
+    end
+
     def validate!
-      raise ::SolidusImporter::Exception, 'Import required' if !@import
+      raise ::SolidusImporter::Exception, 'Valid import entity required' if !@import || !@import.valid?
       raise ::SolidusImporter::Exception, "No importer found for #{@import.import_type} type" if !@importer
     end
   end
