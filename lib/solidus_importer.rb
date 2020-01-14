@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'solidus_core'
+require 'solidus_support'
 
+require 'solidus_importer/version'
 require 'solidus_importer/exception'
 require 'solidus_importer/utils'
 
