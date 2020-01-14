@@ -1,15 +1,26 @@
 require:
-  - solidus_extension_dev_tools/rubocop
+  - solidus_dev_support/rubocop
 
 inherit_gem:
-  solidus_extension_dev_tools: .rubocop.yml
+  solidus_dev_support: .rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 2.5
   Exclude:
     - spec/dummy/**/*
     - vendor/**/*
 
+Rails/ApplicationJob:
+  Enabled: false
+
 Rails/SkipsModelValidations:
   Exclude:
     - db/migrate/**/*
+    - spec/**/*
+
+RSpec/MultipleExpectations:
+  # Default is 1
+  Max: 5
+
+RSpec/NestedGroups:
+  # Default is 3
+  Max: 6
