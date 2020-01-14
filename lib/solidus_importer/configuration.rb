@@ -22,6 +22,7 @@ module SolidusImporter
         processors: [
           SolidusImporter::Processors::Product,
           SolidusImporter::Processors::Variant,
+          SolidusImporter::Processors::ProductImages,
           SolidusImporter::Processors::Log
         ]
       }
