@@ -23,14 +23,18 @@ module SolidusImporter
     validates :import_type, presence: true, allow_blank: false
     validates :state, presence: true, allow_blank: false
 
-    def import_file=(path)
-      raise SolidusImporter::Exception, 'Existing file required' if !path || !File.exist?(path)
-
-      self.file = File.open(path, 'r')
+    def created_or_failed?
+      %w[created failed].include? state
     end
 
     def finished?
       rows.failed_or_completed.size == rows.size
+    end
+
+    def import_file=(path)
+      raise SolidusImporter::Exception, 'Existing file required' if !path || !File.exist?(path)
+
+      self.file = File.open(path, 'r')
     end
   end
 end
