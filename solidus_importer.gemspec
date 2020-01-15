@@ -7,17 +7,16 @@ Gem::Specification.new do |s|
   s.name        = 'solidus_importer'
   s.version     = SolidusImporter::VERSION
   s.summary     = 'Solidus Importer'
-  s.description = 'Solidus Importer'
+  s.description = 'Solidus Importer extension to migrate data from other eCommerce systems'
   s.license     = 'BSD-3-Clause'
 
   s.author      = 'Nebulab SRL'
-  s.homepage    = 'https://www.nebulab.it'
-  # s.email       = 'TODO'
+  s.email       = 'contact@solidus.io'
+  s.homepage    = 'https://solidus.io'
 
   if s.respond_to?(:metadata)
-    s.metadata["homepage_uri"] = s.homepage if s.homepage
-    s.metadata["source_code_uri"] = s.homepage if s.homepage
-    # s.metadata["changelog_uri"] = 'TODO'
+    s.metadata['homepage_uri'] = s.homepage if s.homepage
+    s.metadata['source_code_uri'] = s.homepage if s.homepage
   end
 
   s.required_ruby_version = '~> 2.4'
@@ -26,9 +25,9 @@ Gem::Specification.new do |s|
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   s.test_files = Dir['spec/**/*']
-  s.bindir = "exe"
+  s.bindir = 'exe'
   s.executables = s.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.require_paths = ['lib']
 
   s.add_dependency 'solidus_core', ['>= 2.0.0', '< 3']
   s.add_dependency 'solidus_support', '~> 0.4.0'
