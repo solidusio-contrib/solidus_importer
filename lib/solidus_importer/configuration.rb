@@ -4,21 +4,21 @@ module SolidusImporter
   class Configuration < Spree::Preferences::Configuration
     preference :solidus_importer, :hash, default: {
       customers: {
-        importer: SolidusImporter::Importers::Customers,
+        importer: SolidusImporter::BaseImporter,
         processors: [
           SolidusImporter::Processors::Customer,
           SolidusImporter::Processors::Log
         ]
       },
       orders: {
-        importer: SolidusImporter::Importers::Orders,
+        importer: SolidusImporter::BaseImporter,
         processors: [
           SolidusImporter::Processors::Order,
           SolidusImporter::Processors::Log
         ]
       },
       products: {
-        importer: SolidusImporter::Importers::Products,
+        importer: SolidusImporter::BaseImporter,
         processors: [
           SolidusImporter::Processors::Product,
           SolidusImporter::Processors::Variant,
