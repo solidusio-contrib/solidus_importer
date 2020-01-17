@@ -10,6 +10,33 @@ RSpec.describe SolidusImporter::ProcessImport do
 
     let(:rows_count) { import.rows.size }
 
+    context 'with a CSV file with invalid headers' do
+      let(:rows) { build_list(:solidus_importer_row_customer, 3) }
+      let(:import) do
+        create(:solidus_importer_import_customers, rows: rows).tap do |import|
+          import.import_file = solidus_importer_fixture_path('invalid_headers.csv')
+        end
+      end
+
+      it 'fails to import data' do
+        expect(described_method.messages).to eq('Invalid headers')
+        expect(described_method.state).to eq('failed')
+      end
+    end
+
+    context 'with some rows' do
+      let(:process_row) { instance_double(::SolidusImporter::ProcessRow, process: nil) }
+      let(:rows) { build_list(:solidus_importer_row_customer, 3) }
+      let(:import) { create(:solidus_importer_import_customers, rows: rows) }
+
+      before do
+        allow(::SolidusImporter::ProcessRow).to receive_messages(new: process_row)
+        described_method
+      end
+
+      it { expect(::SolidusImporter::ProcessRow).to have_received(:new).exactly(rows_count).times }
+    end
+
     context 'with completed rows' do
       let(:process_row) { instance_double(::SolidusImporter::ProcessRow, process: nil) }
       let(:rows) { build_list(:solidus_importer_row_customer, 3) }
