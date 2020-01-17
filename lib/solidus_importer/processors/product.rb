@@ -3,13 +3,9 @@
 module SolidusImporter
   module Processors
     class Product < Base
-      def call(_context)
-        return @errors unless validate_row.nil?
-
-        @product = load_product
-        return { product: @product } if @row.data['Variant SKU'].present?
-
-        save_product
+      def call(context)
+        @data = context[:data]
+        context.merge!(check_data || save_product)
       end
 
       def options
@@ -21,43 +17,33 @@ module SolidusImporter
 
       private
 
-      def attrs
-        @attrs ||= extract_attrs(@row.data, mapping)
+      def check_data
+        if @data.blank?
+          { success: false, messages: 'Missing input data' }
+        elsif @data['Handle'].blank?
+          { success: false, messages: 'Missing required key: "Handle"' }
+        elsif @data['Variant SKU'].present?
+          { product: load_product }
+        end
       end
 
       def load_product
-        Spree::Product.find_by(slug: attrs[:slug])
-      end
-
-      def mapping
-        @importer.mapping_product
-      end
-
-      def save_product
-        @product ||= Spree::Product.new do |prod|
-          prod.slug = attrs[:slug]
-          prod.price = options[:price]
-          prod.shipping_category = options[:shipping_category]
-        end
-        @new_record = @product.new_record?
-        update_context(@product, prepare_product && @product.save)
+        Spree::Product.find_by(slug: @data['Handle'])
       end
 
       def prepare_product
-        @product.assign_attributes(attrs)
-        true
-      rescue StandardError => e
-        @messages = e.message
-        false
+        product = load_product || Spree::Product.new do |prod|
+          prod.slug = @data['Handle']
+          prod.price = options[:price]
+          prod.shipping_category = options[:shipping_category]
+        end
+        product.name = @data['Title'] unless @data['Title'].nil?
+        product
       end
 
-      def validate_row
-        @errors =
-          if !@row.is_a?(SolidusImporter::Row)
-            { success: false, messages: 'Invalid row type' }
-          elsif invalid_keys.any?
-            { success: false, messages: 'Invalid keys in row data' }
-          end
+      def save_product
+        product = prepare_product
+        prepare_context(entity: product, new_record: product.new_record?, success: product.save)
       end
     end
   end

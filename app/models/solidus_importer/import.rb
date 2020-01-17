@@ -4,6 +4,8 @@ module SolidusImporter
   class Import < ApplicationRecord
     self.table_name = 'solidus_importer_imports'
 
+    attr_accessor :importer
+
     has_many :rows,
       class_name: 'SolidusImporter::Row',
       inverse_of: :import,

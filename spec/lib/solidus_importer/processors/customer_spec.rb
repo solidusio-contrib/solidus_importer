@@ -3,19 +3,23 @@
 require 'spec_helper'
 
 RSpec.describe SolidusImporter::Processors::Customer do
-  subject(:described_instance) { described_class.new(importer, row) }
-
-  let(:importer) { SolidusImporter::Importers::Customers }
-  let(:row) {}
-
   describe '#call' do
-    subject(:described_method) { described_instance.call(context) }
+    subject(:described_method) { described_class.call(context) }
 
     let(:context) { {} }
 
-    context 'with a not customer row' do
-      let(:row) { instance_double('SomeClass') }
-      let(:result_error) { { success: false, messages: 'Invalid row type' } }
+    context 'without customer row data' do
+      let(:result_error) { { success: false, messages: 'Missing input data' } }
+
+      it 'returns an error context' do
+        expect(described_method).to eq(result_error)
+      end
+    end
+
+    context 'without customer email in row data' do
+      let(:context) { { data: data } }
+      let(:data) { 'Some data' }
+      let(:result_error) { { data: data, success: false, messages: 'Missing required key: "Email Address"' } }
 
       it 'returns an error context' do
         expect(described_method).to eq(result_error)
@@ -23,9 +27,12 @@ RSpec.describe SolidusImporter::Processors::Customer do
     end
 
     context 'with a customer row with a file entity' do
-      let(:row) { build(:solidus_importer_row_customer, :with_import) }
+      let(:context) { { data: data } }
+      let(:data) { build(:solidus_importer_row_customer, :with_import).data }
       let(:user) { Spree::User.last }
-      let(:result) { { class_name: 'Spree::User', id: user.id, new_record: true, success: true } }
+      let(:result) do
+        { data: data, class_name: 'Spree::User', id: user.id, entity: user, new_record: true, success: true }
+      end
 
       it 'creates a new user' do
         expect { described_method }.to change { Spree::User.count }.by(1)
@@ -36,7 +43,9 @@ RSpec.describe SolidusImporter::Processors::Customer do
       context 'with an existing user' do
         let(:yesterday) { 1.day.ago }
         let(:user) { create(:user, created_at: yesterday, updated_at: yesterday) }
-        let(:result) { { class_name: 'Spree::User', id: user.id, new_record: false, success: true } }
+        let(:result) do
+          { data: data, class_name: 'Spree::User', id: user.id, entity: user, new_record: false, success: true }
+        end
 
         before do
           user
@@ -60,33 +69,12 @@ RSpec.describe SolidusImporter::Processors::Customer do
           end
         end
       end
-
-      context 'with an invalid attribute in mapping' do
-        before { allow(described_instance).to receive(:mapping).and_return('Email Address' => :invalid_attr) }
-
-        it "doesn't update the user" do
-          expect { described_method }.not_to(change { Spree::User.count })
-          expect(described_method[:success]).to be_falsey
-          expect(described_method[:messages]).not_to be_empty
-        end
-      end
     end
 
     context 'with invalid data' do
-      let(:row) { build(:solidus_importer_row_customer, :with_import, data: data) }
-      let(:data) { { 'Email Address' => '' } }
-      let(:result) { { success: false, messages: "Email can't be blank" } }
-
-      it 'returns an error context with the error messages' do
-        expect { described_method }.to change { Spree::User.count }.by(0)
-        expect(described_method).to include(result)
-      end
-    end
-
-    context 'with extra keys in data' do
-      let(:row) { build(:solidus_importer_row_customer, :with_import, data: data) }
-      let(:data) { { 'Email Address' => 'something', 'A field' => 'A value' } }
-      let(:result) { { success: false, messages: 'Invalid keys in row data' } }
+      let(:data) { { 'Email Address' => '-' } }
+      let(:context) { { data: data } }
+      let(:result) { { data: data, success: false, messages: 'Email is invalid' } }
 
       it 'returns an error context with the error messages' do
         expect { described_method }.to change { Spree::User.count }.by(0)

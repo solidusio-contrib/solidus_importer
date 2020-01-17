@@ -3,28 +3,33 @@
 require 'spec_helper'
 
 RSpec.describe SolidusImporter::Processors::Variant do
-  subject(:described_instance) { described_class.new(importer, row) }
-
-  let(:importer) { SolidusImporter::Importers::Products }
-  let(:row) {}
-
   describe '#call' do
-    subject(:described_method) { described_instance.call(context) }
+    subject(:described_method) { described_class.call(context) }
 
-    let(:context) {}
+    let(:context) { {} }
 
-    context 'with a not product row' do
-      let(:row) { instance_double('SomeClass', data: { 'Variant SKU' => 'Some SKU' }) }
-      let(:result_error) { { success: false, messages: 'Invalid row type' } }
+    context 'without variant row data' do
+      let(:result_error) { { success: false, messages: 'Missing input data' } }
 
       it 'returns an error context' do
         expect(described_method).to eq(result_error)
       end
     end
 
-    context 'without a product' do
-      let(:row) { build(:solidus_importer_row_variant, :with_import) }
-      let(:result_error) { { success: false, messages: 'Product not found' } }
+    context 'without variant SKU in row data' do
+      let(:data) { 'some data' }
+      let(:context) { { data: data } }
+      let(:result) { { data: data } }
+
+      it 'skips the processor execution' do
+        expect(described_method).to eq(result)
+      end
+    end
+
+    context 'without a target product' do
+      let(:data) { { 'Variant SKU' => 'some SKU' } }
+      let(:context) { { data: data } }
+      let(:result_error) { { data: data, success: false, messages: 'Missing product' } }
 
       it 'returns an error context' do
         expect(described_method).to eq(result_error)
@@ -32,16 +37,24 @@ RSpec.describe SolidusImporter::Processors::Variant do
     end
 
     context 'with a variant row, a product and a source file' do
-      let(:context) { { product: product } }
-      let(:row) { build(:solidus_importer_row_variant, :with_import) }
+      let(:context) { { data: data, product: product } }
+      let(:data) { build(:solidus_importer_row_variant, :with_import).data }
       let(:variant) { Spree::Variant.last }
-      let(:result) { { class_name: 'Spree::Variant', id: variant.id, new_record: true, success: true } }
-      let(:product) { build_stubbed(:product, slug: 'a-product-slug-2') }
-      let(:shipping_category) { create(:shipping_category) }
+      let(:result) do
+        {
+          data: data,
+          product: product,
+          class_name: 'Spree::Variant',
+          id: variant.id,
+          entity: variant,
+          new_record: true,
+          success: true
+        }
+      end
+      let(:product) { build_stubbed(:product, slug: data['Handle']) }
 
       before do
         allow(product).to receive(:touch)
-        allow(Spree::Product).to receive(:find_by).and_return(product)
         allow(Spree::ShippingCategory).to receive(:last).and_return(build_stubbed(:shipping_category))
       end
 
@@ -52,13 +65,11 @@ RSpec.describe SolidusImporter::Processors::Variant do
       end
 
       context 'with an existing variant' do
-        let(:yesterday) { 1.day.ago }
-        let(:variant) { create(:variant, weight: 10.0, created_at: yesterday, updated_at: yesterday) }
-        let(:result) { { class_name: 'Spree::Variant', id: variant.id, new_record: false, success: true } }
+        let(:variant) { create(:variant, sku: data['Variant SKU'], weight: 10.0) }
 
         before do
+          result[:new_record] = false
           variant
-          allow(Spree::Variant).to receive(:find_or_initialize_by).and_return(variant)
         end
 
         after { variant.destroy }
@@ -66,27 +77,16 @@ RSpec.describe SolidusImporter::Processors::Variant do
         it 'updates the variant' do
           expect { described_method }.not_to(change { Spree::Variant.count })
           expect(described_method).to eq(result)
-          expect(variant.reload.weight.to_f).to eq(20.0)
+          expect(variant.reload.weight.to_f).to eq(data['Variant Weight'])
         end
 
         context 'with an invalid variant' do
-          before { variant.product_id = nil }
+          before { variant.update_column(:product_id, nil) }
 
           it "doesn't update the variant" do
             expect { described_method }.not_to(change { Spree::Variant.count })
             expect(described_method[:success]).to be_falsey
             expect(described_method[:messages]).not_to be_empty
-          end
-        end
-
-        context 'with extra keys in data' do
-          let(:result) { { success: false, messages: 'Invalid keys in row data' } }
-
-          before { row.data['Some key'] = 'Some value' }
-
-          it 'returns an error context with the error messages' do
-            expect { described_method }.to change { Spree::Variant.count }.by(0)
-            expect(described_method).to include(result)
           end
         end
       end

@@ -3,12 +3,9 @@
 module SolidusImporter
   module Processors
     class Order < Base
-      delegate :mapping, to: :@importer
-
-      def call(_context)
-        return @errors unless validate_row.nil?
-
-        save_order
+      def call(context)
+        @data = context[:data]
+        context.merge!(check_data || save_order)
       end
 
       def options
@@ -19,33 +16,27 @@ module SolidusImporter
 
       private
 
-      def attrs
-        @attrs ||= extract_attrs(@row.data, mapping)
-      end
-
-      def save_order
-        @order = Spree::Order.find_or_initialize_by(number: attrs[:number]) do |ord|
-          ord.store = options[:store]
+      def check_data
+        if @data.blank?
+          { success: false, messages: 'Missing input data' }
+        elsif @data['Name'].blank?
+          { success: false, messages: 'Missing required key: "Name"' }
         end
-        @new_record = @order.new_record?
-        update_context(@order, prepare_order && @order.save)
       end
 
       def prepare_order
-        @order.assign_attributes(attrs)
-        true
-      rescue StandardError => e
-        @messages = e.message
-        false
+        order = Spree::Order.find_or_initialize_by(number: @data['Name']) do |ord|
+          ord.store = options[:store]
+        end
+        order.currency = @data['Currency'] unless @data['Currency'].nil?
+        order.email = @data['Email'] unless @data['Email'].nil?
+        order.special_instructions = @data['Note'] unless @data['Note'].nil?
+        order
       end
 
-      def validate_row
-        @errors =
-          if !@row.is_a?(SolidusImporter::Row)
-            { success: false, messages: 'Invalid row type' }
-          elsif invalid_keys.any?
-            { success: false, messages: 'Invalid keys in row data' }
-          end
+      def save_order
+        order = prepare_order
+        prepare_context(entity: order, new_record: order.new_record?, success: order.save)
       end
     end
   end
