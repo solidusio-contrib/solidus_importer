@@ -6,11 +6,11 @@ module SolidusImporter
 
     retry_on ActiveRecord::Deadlocked
 
-    def perform(import_id)
-      raise ArgumentError, 'Missing import id' unless import_id
+    def perform(import_file, import_type)
+      raise ArgumentError, 'Missing import file' unless import_file
+      raise ArgumentError, 'Missing import type' unless import_type
 
-      import = ::SolidusImporter::Import.find(import_id)
-      ::SolidusImporter::ProcessImport.new(import).process
+      ::SolidusImporter::ProcessImport.import_from_file(import_file, import_type)
     end
   end
 end
