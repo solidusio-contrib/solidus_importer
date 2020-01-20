@@ -4,31 +4,23 @@ require 'spec_helper'
 
 RSpec.describe SolidusImporter::ImportJob do
   describe '#perform' do
-    subject(:described_method) { described_class.perform_now(import_id) }
+    subject(:described_method) { described_class.perform_now(import_file, import_type) }
 
-    let(:import_id) {}
+    let(:import_file) {}
+    let(:import_type) {}
 
     it { expect { described_method }.to raise_error(ArgumentError) }
 
-    context 'with a missing import' do
-      let(:import_id) { 123 }
-
-      it { expect { described_method }.to raise_error(ActiveRecord::RecordNotFound) }
-    end
-
-    context 'with a source file' do
-      let(:import) { build_stubbed(:solidus_importer_import_customers) }
-      let(:import_id) { import.id }
-      let(:process_import) { instance_double(SolidusImporter::ProcessImport, process: nil) }
+    context 'with an import file and type' do
+      let(:import_file) { solidus_importer_fixture_path('customers.csv') }
+      let(:import_type) { :customers }
 
       before do
-        allow(SolidusImporter::Import).to receive_messages(find: import)
-        allow(SolidusImporter::ProcessImport).to receive(:new).with(import).and_return(process_import)
+        allow(SolidusImporter::ProcessImport).to receive(:import_from_file)
         described_method
       end
 
-      it { expect(SolidusImporter::ProcessImport).to have_received(:new).with(import) }
-      it { expect(process_import).to have_received(:process).with(no_args) }
+      it { expect(SolidusImporter::ProcessImport).to have_received(:import_from_file).with(import_file, import_type) }
     end
   end
 end

@@ -1,0 +1,69 @@
+# frozen_string_literal: true
+
+require 'spec_helper'
+
+RSpec.describe SolidusImporter::Processors::Order do
+  describe '#call' do
+    subject(:described_method) { described_class.call(context) }
+
+    let(:context) { {} }
+
+    context 'without order row data' do
+      let(:result_error) { { success: false, messages: 'Missing input data' } }
+
+      it 'returns an error context' do
+        expect(described_method).to eq(result_error)
+      end
+    end
+
+    context 'without order number in row data' do
+      let(:context) { { data: data } }
+      let(:data) { 'Some data' }
+      let(:result_error) { { data: data, success: false, messages: 'Missing required key: "Name"' } }
+
+      it 'returns an error context' do
+        expect(described_method).to eq(result_error)
+      end
+    end
+
+    context 'with an order row with a file entity' do
+      let(:context) { { data: data } }
+      let(:data) { build(:solidus_importer_row_order, :with_import).data }
+      let(:order) { Spree::Order.last }
+      let(:result) { { data: data, entity: order, new_record: true, success: true } }
+
+      before { allow(Spree::Store).to receive(:default).and_return(build_stubbed(:store)) }
+
+      it 'creates a new order' do
+        expect { described_method }.to change { Spree::Order.count }.by(1)
+        expect(described_method).to eq(result)
+        order.destroy
+      end
+
+      context 'with an existing order' do
+        let(:yesterday) { 1.day.ago }
+        let(:order) do
+          create(:order, number: data['Name'], email: data['Email'], created_at: yesterday, updated_at: yesterday)
+        end
+        let(:result) { { data: data, entity: order, new_record: false, success: true } }
+
+        before { order }
+
+        after { order.destroy }
+
+        it 'updates the order' do
+          expect { described_method }.not_to(change{ Spree::Order.count })
+          expect(described_method).to eq(result)
+          expect(order.reload.email).to eq('an_email@example.com')
+          order.destroy
+        end
+
+        context 'with an invalid order' do
+          before { order.update_column(:state, 'an invalid state') }
+
+          it { expect(described_method[:success]).to be_falsey }
+        end
+      end
+    end
+  end
+end

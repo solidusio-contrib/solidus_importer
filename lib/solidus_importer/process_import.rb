@@ -7,14 +7,18 @@ module SolidusImporter
   # This class parse the source file and create the rows (scan). Then it asks to
   # Process Row to process each one.
   class ProcessImport
-    def initialize(import)
+    attr_reader :importer
+
+    def initialize(import, importer_options: nil)
       @import = import
-      @importer = ::SolidusImporter::Config.solidus_importer.dig(@import.import_type.to_sym, :importer)
+      options = importer_options || ::SolidusImporter::Config.solidus_importer[@import.import_type.to_sym]
+      @importer = options[:importer].new(options)
+      @import.importer = @importer
       validate!
     end
 
     def process(force_scan: nil)
-      return false unless @import.created_or_failed?
+      return @import unless @import.created_or_failed?
 
       scan_required = force_scan.nil? ? @import.created? : force_scan
       @import.update(state: :processing)
@@ -22,7 +26,16 @@ module SolidusImporter
       initial_context = @importer.before_import(initial_context)
       rows = process_rows(initial_context)
       @import.update(state: :completed) if rows.zero?
-      true
+      @import
+    end
+
+    class << self
+      def import_from_file(import_path, import_type)
+        import = ::SolidusImporter::Import.new(import_type: import_type)
+        import.import_file = import_path
+        import.save!
+        new(import).process
+      end
     end
 
     private
@@ -34,19 +47,26 @@ module SolidusImporter
         encoding: 'UTF-8',
         header_converters: ->(h) { h.strip }
       )
-      check_data(data)
       prepare_rows(data)
-      { success: true }
     end
 
     def check_data(data)
+      messages = []
       headers = data.headers
-      @import.update(state: :failed, messages: 'Invalid headers') if headers.blank? || !headers.exclude?(nil)
+      messages << 'Invalid headers' if headers.blank? || !headers.exclude?(nil)
+      messages
     end
 
     def prepare_rows(data)
-      data.each do |row|
-        @import.rows << ::SolidusImporter::Row.new(data: row.to_h)
+      messages = check_data(data)
+      if messages.empty?
+        data.each do |row|
+          @import.rows << ::SolidusImporter::Row.new(data: row.to_h)
+        end
+        { success: true }
+      else
+        @import.update(state: :failed, messages: messages.join(', '))
+        { success: false, messages: messages.join(', ') }
       end
     end
 

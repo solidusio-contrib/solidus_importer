@@ -3,13 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe SolidusImporter::Processors::Log do
-  subject(:described_instance) { described_class.new(importer, row) }
-
-  let(:importer) { class_double('AnImporter') }
-  let(:row) { instance_double(SolidusImporter::Row) }
-
   describe '#call' do
-    subject(:described_method) { described_instance.call(context) }
+    subject(:described_method) { described_class.call(context) }
 
     let(:context) { {} }
 
@@ -21,8 +16,8 @@ RSpec.describe SolidusImporter::Processors::Log do
     end
   end
 
-  describe '#ensure_call' do
-    subject(:described_method) { described_instance.ensure_call }
+  describe '.ensure_call' do
+    subject(:described_method) { described_class.ensure_call }
 
     it { is_expected.to be_truthy }
   end

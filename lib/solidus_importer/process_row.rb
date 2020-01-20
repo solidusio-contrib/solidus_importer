@@ -12,10 +12,11 @@ module SolidusImporter
     end
 
     def process(initial_context)
-      context = @importer.processors(@row).each_with_object(initial_context.dup) do |processor, ctx|
-        next if ctx[:success] == false && !processor.ensure_call
+      context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
+      @importer.processors.inject(context) do |ctx, processor|
+        next {} if ctx[:success] == false && !processor.ensure_call
 
-        ctx.merge! processor.call(ctx)
+        processor.call(ctx)
       end
       @row.update!(
         state: context[:success] ? :completed : :failed,
