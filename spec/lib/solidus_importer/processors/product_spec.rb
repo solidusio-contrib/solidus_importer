@@ -30,9 +30,7 @@ RSpec.describe SolidusImporter::Processors::Product do
       let(:context) { { data: data } }
       let(:data) { build(:solidus_importer_row_product, :with_import).data }
       let(:product) { Spree::Product.last }
-      let(:result) do
-        { data: data, class_name: 'Spree::Product', id: product.id, entity: product, new_record: true, success: true }
-      end
+      let(:result) { { data: data, entity: product, new_record: true, success: true } }
       let(:shipping_category) { create(:shipping_category) }
 
       before { shipping_category }
@@ -47,16 +45,7 @@ RSpec.describe SolidusImporter::Processors::Product do
 
       context 'with an existing product' do
         let(:product) { create(:product, slug: data['Handle']) }
-        let(:result) do
-          {
-            data: data,
-            class_name: 'Spree::Product',
-            id: product.id,
-            entity: product,
-            new_record: false,
-            success: true
-          }
-        end
+        let(:result) { { data: data, entity: product, new_record: false, success: true } }
 
         before { product }
 

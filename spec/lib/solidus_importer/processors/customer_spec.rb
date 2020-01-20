@@ -30,9 +30,7 @@ RSpec.describe SolidusImporter::Processors::Customer do
       let(:context) { { data: data } }
       let(:data) { build(:solidus_importer_row_customer, :with_import).data }
       let(:user) { Spree::User.last }
-      let(:result) do
-        { data: data, class_name: 'Spree::User', id: user.id, entity: user, new_record: true, success: true }
-      end
+      let(:result) { { data: data, entity: user, new_record: true, success: true } }
 
       it 'creates a new user' do
         expect { described_method }.to change { Spree::User.count }.by(1)
@@ -43,9 +41,7 @@ RSpec.describe SolidusImporter::Processors::Customer do
       context 'with an existing user' do
         let(:yesterday) { 1.day.ago }
         let(:user) { create(:user, created_at: yesterday, updated_at: yesterday) }
-        let(:result) do
-          { data: data, class_name: 'Spree::User', id: user.id, entity: user, new_record: false, success: true }
-        end
+        let(:result) { { data: data, entity: user, new_record: false, success: true } }
 
         before do
           user

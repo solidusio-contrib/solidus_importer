@@ -30,9 +30,7 @@ RSpec.describe SolidusImporter::Processors::Order do
       let(:context) { { data: data } }
       let(:data) { build(:solidus_importer_row_order, :with_import).data }
       let(:order) { Spree::Order.last }
-      let(:result) do
-        { data: data, class_name: 'Spree::Order', id: order.id, entity: order, new_record: true, success: true }
-      end
+      let(:result) { { data: data, entity: order, new_record: true, success: true } }
 
       before { allow(Spree::Store).to receive(:default).and_return(build_stubbed(:store)) }
 
@@ -47,9 +45,7 @@ RSpec.describe SolidusImporter::Processors::Order do
         let(:order) do
           create(:order, number: data['Name'], email: data['Email'], created_at: yesterday, updated_at: yesterday)
         end
-        let(:result) do
-          { data: data, class_name: 'Spree::Order', id: order.id, entity: order, new_record: false, success: true }
-        end
+        let(:result) { { data: data, entity: order, new_record: false, success: true } }
 
         before { order }
 

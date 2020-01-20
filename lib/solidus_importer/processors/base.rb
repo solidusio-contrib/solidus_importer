@@ -11,8 +11,6 @@ module SolidusImporter
         if success
           {
             success: true,
-            id: entity.id,
-            class_name: entity.class.name,
             entity: entity,
             new_record: new_record
           }

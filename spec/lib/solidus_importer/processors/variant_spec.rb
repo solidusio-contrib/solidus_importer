@@ -40,17 +40,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
       let(:context) { { data: data, product: product } }
       let(:data) { build(:solidus_importer_row_variant, :with_import).data }
       let(:variant) { Spree::Variant.last }
-      let(:result) do
-        {
-          data: data,
-          product: product,
-          class_name: 'Spree::Variant',
-          id: variant.id,
-          entity: variant,
-          new_record: true,
-          success: true
-        }
-      end
+      let(:result) { { data: data, product: product, entity: variant, new_record: true, success: true } }
       let(:product) { build_stubbed(:product, slug: data['Handle']) }
 
       before do
