@@ -51,18 +51,12 @@ RSpec.describe SolidusImporter::Processors::Variant do
       it 'creates a new variant' do
         expect { described_method }.to change { Spree::Variant.count }.by(1)
         expect(described_method).to eq(result)
-        variant.destroy
       end
 
       context 'with an existing variant' do
-        let(:variant) { create(:variant, sku: data['Variant SKU'], weight: 10.0) }
+        let!(:variant) { create(:variant, sku: data['Variant SKU'], weight: 10.0) }
 
-        before do
-          result[:new_record] = false
-          variant
-        end
-
-        after { variant.destroy }
+        before { result[:new_record] = false }
 
         it 'updates the variant' do
           expect { described_method }.not_to(change { Spree::Variant.count })

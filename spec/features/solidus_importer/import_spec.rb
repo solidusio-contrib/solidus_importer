@@ -21,7 +21,6 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(Spree::User.where(email: user_emails).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
-      SolidusImporter::Import.last.destroy
     end
   end
 
@@ -32,8 +31,6 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:product_slug) { 'hightop-sports-sneaker' }
     let!(:shipping_category) { create(:shipping_category) }
 
-    after { shipping_category.destroy }
-
     it 'imports some products' do
       expect { import }.to change(Spree::Product, :count).by(1)
       product = Spree::Product.last
@@ -41,7 +38,6 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(product.slug).to eq(product_slug)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
-      SolidusImporter::Import.last.destroy
     end
   end
 
@@ -52,14 +48,11 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:order_numbers) { ['#MA-1097', '#MA-1098'] }
     let!(:store) { create(:store) }
 
-    after { store.destroy }
-
     it 'imports some orders' do
       expect { import }.to change(Spree::Order, :count).by(2)
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
-      SolidusImporter::Import.last.destroy
     end
   end
 end

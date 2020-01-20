@@ -35,21 +35,14 @@ RSpec.describe SolidusImporter::Processors::Product do
 
       before { shipping_category }
 
-      after { shipping_category.destroy }
-
       it 'creates a new product' do
         expect { described_method }.to change { Spree::Product.count }.by(1)
         expect(described_method).to eq(result)
-        product.destroy
       end
 
       context 'with an existing product' do
-        let(:product) { create(:product, slug: data['Handle']) }
         let(:result) { { data: data, entity: product, new_record: false, success: true } }
-
-        before { product }
-
-        after { product.destroy }
+        let!(:product) { create(:product, slug: data['Handle']) }
 
         it 'updates the product' do
           expect { described_method }.not_to(change { Spree::Product.count })
