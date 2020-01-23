@@ -9,7 +9,8 @@ RSpec.describe SolidusImporter::Processors::Variant do
     let(:context) { {} }
 
     context 'without variant row data' do
-      let(:result_error) { { success: false, messages: 'Missing input data' } }
+      let(:context) { { data: nil, product: nil } }
+      let(:result_error) { context.merge(success: false, messages: 'Missing input data') }
 
       it 'returns an error context' do
         expect(described_method).to eq(result_error)
@@ -17,19 +18,17 @@ RSpec.describe SolidusImporter::Processors::Variant do
     end
 
     context 'without variant SKU in row data' do
-      let(:data) { 'some data' }
-      let(:context) { { data: data } }
-      let(:result) { { data: data } }
+      let(:context) { { data: 'some data', product: 'some product' } }
 
       it 'skips the processor execution' do
-        expect(described_method).to eq(result)
+        expect(described_method).to eq(context)
       end
     end
 
     context 'without a target product' do
       let(:data) { { 'Variant SKU' => 'some SKU' } }
-      let(:context) { { data: data } }
-      let(:result_error) { { data: data, success: false, messages: 'Missing product' } }
+      let(:context) { { data: data, product: nil } }
+      let(:result_error) { context.merge(success: false, messages: 'Parent entity must be a valid product') }
 
       it 'returns an error context' do
         expect(described_method).to eq(result_error)

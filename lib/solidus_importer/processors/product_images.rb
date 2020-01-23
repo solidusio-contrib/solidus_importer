@@ -4,8 +4,8 @@ module SolidusImporter
   module Processors
     class ProductImages < Base
       def call(context)
-        @data = context[:data]
-        @entity = context[:entity]
+        @data = context.fetch(:data)
+        @entity = context.fetch(:entity)
         context.merge!(check_data || save_images)
       end
 

@@ -9,7 +9,8 @@ RSpec.describe SolidusImporter::Processors::Customer do
     let(:context) { {} }
 
     context 'without customer row data' do
-      let(:result_error) { { success: false, messages: 'Missing input data' } }
+      let(:context) { { data: nil } }
+      let(:result_error) { { data: nil, success: false, messages: 'Missing input data' } }
 
       it 'returns an error context' do
         expect(described_method).to eq(result_error)

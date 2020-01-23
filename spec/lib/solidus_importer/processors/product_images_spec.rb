@@ -9,13 +9,13 @@ RSpec.describe SolidusImporter::Processors::ProductImages do
     let(:context) { {} }
 
     context 'without an image src in row data' do
-      let(:context) { { data: 'Some data' } }
+      let(:context) { { data: 'Some data', entity: nil } }
 
       it { is_expected.to eq(context) }
     end
 
     context 'without a product in row data' do
-      let(:context) { { data: data } }
+      let(:context) { { data: data, entity: nil } }
       let(:data) { { 'Image Src' => solidus_importer_fixture_path('thinking-cat.jpg') } }
       let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid product') }
 

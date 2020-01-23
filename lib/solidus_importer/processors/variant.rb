@@ -4,8 +4,8 @@ module SolidusImporter
   module Processors
     class Variant < Base
       def call(context)
-        @data = context[:data]
-        @product = context[:product]
+        @data = context.fetch(:data)
+        @product = context.fetch(:product) if variant?
         context.merge!(check_data || save_variant)
       end
 
@@ -14,10 +14,10 @@ module SolidusImporter
       def check_data
         if @data.blank?
           { success: false, messages: 'Missing input data' }
-        elsif @data['Variant SKU'].blank?
+        elsif !variant?
           {}
-        elsif !@product
-          { success: false, messages: 'Missing product' }
+        elsif !@product&.valid?
+          { success: false, messages: 'Parent entity must be a valid product' }
         end
       end
 
@@ -32,6 +32,10 @@ module SolidusImporter
       def save_variant
         variant = prepare_variant
         prepare_context(entity: variant, new_record: variant.new_record?, success: variant.save)
+      end
+
+      def variant?
+        @variant ||= (@data && @data['Variant SKU'].present?)
       end
     end
   end

@@ -4,7 +4,7 @@ module SolidusImporter
   module Processors
     class Customer < Base
       def call(context)
-        @data = context[:data]
+        @data = context.fetch(:data)
         context.merge!(check_data || save_user)
       end
 
