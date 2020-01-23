@@ -43,7 +43,12 @@ module SolidusImporter
 
       def save_product
         product = prepare_product
-        prepare_context(entity: product, new_record: product.new_record?, success: product.save)
+        {
+          new_record: product.new_record?,
+          success: product.save,
+          product: product,
+          messages: product.errors.full_messages.join(', ')
+        }
       end
     end
   end

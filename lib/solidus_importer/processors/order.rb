@@ -36,7 +36,12 @@ module SolidusImporter
 
       def save_order
         order = prepare_order
-        prepare_context(entity: order, new_record: order.new_record?, success: order.save)
+        {
+          new_record: order.new_record?,
+          success: order.save,
+          order: order,
+          messages: order.errors.full_messages.join(', ')
+        }
       end
     end
   end

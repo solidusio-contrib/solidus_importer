@@ -38,9 +38,11 @@ RSpec.describe SolidusImporter::Processors::Variant do
     context 'with a variant row, a product and a source file' do
       let(:context) { { data: data, product: product } }
       let(:data) { build(:solidus_importer_row_variant, :with_import).data }
-      let(:variant) { Spree::Variant.last }
-      let(:result) { { data: data, product: product, entity: variant, new_record: true, success: true } }
       let(:product) { build_stubbed(:product, slug: data['Handle']) }
+      let(:variant) { Spree::Variant.last }
+      let(:result) do
+        { data: data, success: true, product: product, variant: variant, new_record: true, messages: '' }
+      end
 
       before do
         allow(product).to receive(:touch)

@@ -32,7 +32,12 @@ module SolidusImporter
 
       def save_user
         user = prepare_user
-        prepare_context(entity: user, new_record: user.new_record?, success: user.save)
+        {
+          new_record: user.new_record?,
+          success: user.save,
+          user: user,
+          messages: user.errors.full_messages.join(', ')
+        }
       end
     end
   end

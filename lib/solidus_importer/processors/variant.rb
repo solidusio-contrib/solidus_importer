@@ -31,7 +31,12 @@ module SolidusImporter
 
       def save_variant
         variant = prepare_variant
-        prepare_context(entity: variant, new_record: variant.new_record?, success: variant.save)
+        {
+          new_record: variant.new_record?,
+          success: variant.save,
+          variant: variant,
+          messages: variant.errors.full_messages.join(', ')
+        }
       end
 
       def variant?

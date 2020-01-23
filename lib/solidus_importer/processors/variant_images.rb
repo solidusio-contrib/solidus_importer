@@ -5,16 +5,16 @@ module SolidusImporter
     class VariantImages < Base
       def call(context)
         @data = context.fetch(:data)
-        @entity = context.fetch(:entity)
+        @variant = context.fetch(:variant) if variant_image?
         context.merge!(check_data || save_images)
       end
 
       private
 
       def check_data
-        if @data['Variant Image'].blank?
+        if !variant_image?
           {}
-        elsif !@entity || !@entity.is_a?(Spree::Variant) || !@entity.valid?
+        elsif !@variant || !@variant.valid?
           { success: false, messages: 'Target entity must be a valid variant' }
         end
       end
@@ -31,11 +31,15 @@ module SolidusImporter
       def save_images
         image = prepare_image
         if image
-          @entity.images << image
+          @variant.images << image
           { success: true }
         else
-          { success: false, messages: @messages || entity.errors.full_messages.join(', ') }
+          { success: false, messages: @messages || @variant.errors.full_messages.join(', ') }
         end
+      end
+
+      def variant_image?
+        @data['Variant Image'].present?
       end
     end
   end
