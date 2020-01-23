@@ -13,6 +13,9 @@ Rails/SkipsModelValidations:
     - db/migrate/**/*
     - spec/**/*
 
+RSpec/LetSetup:
+  Enabled: false
+
 RSpec/MultipleExpectations:
   # Default is 1
   Max: 5

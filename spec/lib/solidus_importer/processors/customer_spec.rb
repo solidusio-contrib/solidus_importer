@@ -35,20 +35,13 @@ RSpec.describe SolidusImporter::Processors::Customer do
       it 'creates a new user' do
         expect { described_method }.to change { Spree::User.count }.by(1)
         expect(described_method).to eq(result)
-        user.destroy
       end
 
       context 'with an existing user' do
-        let(:yesterday) { 1.day.ago }
-        let(:user) { create(:user, created_at: yesterday, updated_at: yesterday) }
         let(:result) { { data: data, entity: user, new_record: false, success: true } }
+        let!(:user) { create(:user) }
 
-        before do
-          user
-          allow(Spree::User).to receive(:find_or_initialize_by).and_return(user)
-        end
-
-        after { user.destroy }
+        before { allow(Spree::User).to receive(:find_or_initialize_by).and_return(user) }
 
         it 'updates the user' do
           expect { described_method }.not_to(change { Spree::User.count })

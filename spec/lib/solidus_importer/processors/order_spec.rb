@@ -37,25 +37,16 @@ RSpec.describe SolidusImporter::Processors::Order do
       it 'creates a new order' do
         expect { described_method }.to change { Spree::Order.count }.by(1)
         expect(described_method).to eq(result)
-        order.destroy
       end
 
       context 'with an existing order' do
-        let(:yesterday) { 1.day.ago }
-        let(:order) do
-          create(:order, number: data['Name'], email: data['Email'], created_at: yesterday, updated_at: yesterday)
-        end
         let(:result) { { data: data, entity: order, new_record: false, success: true } }
-
-        before { order }
-
-        after { order.destroy }
+        let!(:order) { create(:order, number: data['Name'], email: data['Email']) }
 
         it 'updates the order' do
           expect { described_method }.not_to(change{ Spree::Order.count })
           expect(described_method).to eq(result)
           expect(order.reload.email).to eq('an_email@example.com')
-          order.destroy
         end
 
         context 'with an invalid order' do
