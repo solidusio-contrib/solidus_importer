@@ -20,10 +20,8 @@ module SolidusImporter
       end
 
       def prepare_image
-        Spree::Image.new(
-          attachment: File.open(@data['Image Src']),
-          alt: @data['Alt Text']
-        )
+        attachment = URI.open(@data['Image Src'])
+        Spree::Image.new(attachment: attachment, alt: @data['Alt Text'])
       rescue StandardError => e
         @messages = e.message
         nil

@@ -33,8 +33,8 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let!(:shipping_category) { create(:shipping_category) }
 
     before do
-      allow(File).to receive(:open).and_call_original
-      allow(File).to receive(:open).with(image_url) do
+      allow(URI).to receive(:open).and_call_original
+      allow(URI).to receive(:open).with(image_url) do
         File.open(solidus_importer_fixture_path('thinking-cat.jpg'))
       end
     end
