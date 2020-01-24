@@ -6,7 +6,7 @@ module SolidusImporter
   class Engine < Rails::Engine
     include SolidusSupport::EngineExtensions::Decorators
 
-    isolate_namespace Spree
+    isolate_namespace ::Spree
 
     engine_name 'solidus_importer'
 

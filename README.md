@@ -74,4 +74,4 @@ require 'solidus_importer/factories'
 
 ## About
 
-Copyright (c) 2019 Nebulab SRL, released under the New BSD License
+Copyright (c) 2020 Nebulab SRL, released under the New BSD License
