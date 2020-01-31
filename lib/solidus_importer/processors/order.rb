@@ -17,11 +17,7 @@ module SolidusImporter
       private
 
       def check_data
-        if @data.blank?
-          { success: false, messages: 'Missing input data' }
-        elsif @data['Name'].blank?
-          { success: false, messages: 'Missing required key: "Name"' }
-        end
+        { success: false, messages: 'Missing required key: "Name"' } if @data['Name'].blank?
       end
 
       def prepare_order

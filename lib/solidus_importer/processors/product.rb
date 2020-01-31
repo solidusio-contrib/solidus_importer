@@ -18,9 +18,7 @@ module SolidusImporter
       private
 
       def check_data
-        if @data.blank?
-          { success: false, messages: 'Missing input data' }
-        elsif @data['Handle'].blank?
+        if @data['Handle'].blank?
           { success: false, messages: 'Missing required key: "Handle"' }
         elsif @data['Variant SKU'].present?
           { product: load_product }

@@ -8,15 +8,6 @@ RSpec.describe SolidusImporter::Processors::Variant do
 
     let(:context) { {} }
 
-    context 'without variant row data' do
-      let(:context) { { data: nil, product: nil } }
-      let(:result_error) { context.merge(success: false, messages: 'Missing input data') }
-
-      it 'returns an error context' do
-        expect(described_method).to eq(result_error)
-      end
-    end
-
     context 'without variant SKU in row data' do
       let(:context) { { data: 'some data', product: 'some product' } }
 

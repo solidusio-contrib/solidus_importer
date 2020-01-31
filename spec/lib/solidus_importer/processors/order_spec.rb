@@ -8,15 +8,6 @@ RSpec.describe SolidusImporter::Processors::Order do
 
     let(:context) { {} }
 
-    context 'without order row data' do
-      let(:context) { { data: nil } }
-      let(:result_error) { { data: nil, success: false, messages: 'Missing input data' } }
-
-      it 'returns an error context' do
-        expect(described_method).to eq(result_error)
-      end
-    end
-
     context 'without order number in row data' do
       let(:context) { { data: data } }
       let(:data) { 'Some data' }

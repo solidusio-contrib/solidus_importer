@@ -17,11 +17,7 @@ module SolidusImporter
       private
 
       def check_data
-        if @data.blank?
-          { success: false, messages: 'Missing input data' }
-        elsif @data['Email Address'].blank?
-          { success: false, messages: 'Missing required key: "Email Address"' }
-        end
+        { success: false, messages: 'Missing required key: "Email Address"' } if @data['Email Address'].blank?
       end
 
       def prepare_user

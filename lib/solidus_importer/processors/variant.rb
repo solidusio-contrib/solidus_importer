@@ -12,9 +12,7 @@ module SolidusImporter
       private
 
       def check_data
-        if @data.blank?
-          { success: false, messages: 'Missing input data' }
-        elsif !variant?
+        if !variant?
           {}
         elsif !@product&.valid?
           { success: false, messages: 'Parent entity must be a valid product' }
@@ -40,7 +38,7 @@ module SolidusImporter
       end
 
       def variant?
-        @variant ||= (@data && @data['Variant SKU'].present?)
+        @variant ||= @data['Variant SKU'].present?
       end
     end
   end
