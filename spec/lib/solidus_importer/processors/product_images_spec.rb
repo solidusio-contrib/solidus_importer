@@ -17,16 +17,7 @@ RSpec.describe SolidusImporter::Processors::ProductImages do
     context 'without a product in row data' do
       let(:context) { { data: data, product: nil } }
       let(:data) { { 'Image Src' => solidus_importer_fixture_path('thinking-cat.jpg') } }
-      let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid product') }
-
-      it { is_expected.to eq(result_error) }
-    end
-
-    context 'without a valid product in row data' do
-      let(:product) { build_stubbed(:product).tap { |prod| prod.name = '' } }
-      let(:context) { { data: data, product: product } }
-      let(:data) { { 'Image Src' => solidus_importer_fixture_path('thinking-cat.jpg') } }
-      let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid product') }
+      let(:result_error) { context.merge(success: false, messages: 'Missing required target product') }
 
       it { is_expected.to eq(result_error) }
     end
@@ -34,7 +25,6 @@ RSpec.describe SolidusImporter::Processors::ProductImages do
     context 'with a product and a invalid image in row data' do
       let(:context) { { data: data, product: build_stubbed(:product) } }
       let(:data) { { 'Image Src' => 'some missing image' } }
-      let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid product') }
 
       it 'returns an error context' do
         expect { described_method }.not_to change(context[:product].images, :any?)

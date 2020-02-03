@@ -14,8 +14,8 @@ module SolidusImporter
       def check_data
         if !product_image?
           {}
-        elsif !@product || !@product.valid?
-          { success: false, messages: 'Target entity must be a valid product' }
+        elsif @product.blank?
+          { success: false, messages: 'Missing required target product' }
         end
       end
 

@@ -14,8 +14,8 @@ module SolidusImporter
       def check_data
         if !variant_image?
           {}
-        elsif !@variant || !@variant.valid?
-          { success: false, messages: 'Target entity must be a valid variant' }
+        elsif @variant.blank?
+          { success: false, messages: 'Missing required target variant' }
         end
       end
 

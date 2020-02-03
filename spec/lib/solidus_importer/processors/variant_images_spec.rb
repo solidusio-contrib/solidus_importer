@@ -17,16 +17,7 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
     context 'without a variant in row data' do
       let(:context) { { data: data, variant: nil } }
       let(:data) { { 'Variant Image' => solidus_importer_fixture_path('thinking-cat.jpg') } }
-      let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid variant') }
-
-      it { is_expected.to eq(result_error) }
-    end
-
-    context 'without a valid variant in row data' do
-      let(:variant) { build_stubbed(:variant).tap { |var| var.product = nil } }
-      let(:context) { { data: data, variant: variant } }
-      let(:data) { { 'Variant Image' => solidus_importer_fixture_path('thinking-cat.jpg') } }
-      let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid variant') }
+      let(:result_error) { context.merge(success: false, messages: 'Missing required target variant') }
 
       it { is_expected.to eq(result_error) }
     end
@@ -34,7 +25,6 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
     context 'with a variant and a invalid image in row data' do
       let(:context) { { data: data, variant: build_stubbed(:variant) } }
       let(:data) { { 'Variant Image' => 'some missing image' } }
-      let(:result_error) { context.merge(success: false, messages: 'Target entity must be a valid variant') }
 
       it 'returns an error context' do
         expect { described_method }.not_to change(context[:variant].images, :any?)
