@@ -10,12 +10,6 @@ module SolidusImporter
           details: context.except(:importer, :data).to_json
         )
       end
-
-      class << self
-        def ensure_call
-          true
-        end
-      end
     end
   end
 end

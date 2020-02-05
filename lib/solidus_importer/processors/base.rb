@@ -9,10 +9,6 @@ module SolidusImporter
 
       class << self
         delegate :call, to: :new
-
-        def ensure_call
-          false
-        end
       end
     end
   end
