@@ -5,7 +5,8 @@ module SolidusImporter
     class Customer < Base
       def call(context)
         @data = context.fetch(:data)
-        context.merge!(check_data || save_user)
+        check_data
+        context.merge!(user: process_user)
       end
 
       def options
@@ -17,7 +18,7 @@ module SolidusImporter
       private
 
       def check_data
-        { success: false, messages: 'Missing required key: "Email Address"' } if @data['Email Address'].blank?
+        raise SolidusImporter::Exception, 'Missing required key: "Email Address"' if @data['Email Address'].blank?
       end
 
       def prepare_user
@@ -26,14 +27,8 @@ module SolidusImporter
         end
       end
 
-      def save_user
-        user = prepare_user
-        {
-          new_record: user.new_record?,
-          success: user.save,
-          user: user,
-          messages: user.errors.full_messages.join(', ')
-        }
+      def process_user
+        prepare_user.tap(&:save!)
       end
     end
   end
