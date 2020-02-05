@@ -8,32 +8,27 @@ RSpec.describe SolidusImporter::Processors::Variant do
 
     let(:context) { {} }
 
-    context 'without variant SKU in row data' do
-      let(:context) { { data: 'some data', product: 'some product' } }
-
-      it 'skips the processor execution' do
-        expect(described_method).to eq(context)
-      end
-    end
-
     context 'without a target product' do
-      let(:data) { { 'Variant SKU' => 'some SKU' } }
-      let(:context) { { data: data, product: nil } }
-      let(:result_error) { context.merge(success: false, messages: 'Parent entity must be a valid product') }
+      let(:context) do
+        { data: { 'Variant SKU' => 'some SKU' }, product: nil }
+      end
 
-      it 'returns an error context' do
-        expect(described_method).to eq(result_error)
+      it 'raises an exception' do
+        if Spree.solidus_gem_version < Gem::Version.new('2.8')
+          expect { described_method }.to raise_error(RuntimeError, /No master variant found/)
+        else
+          expect { described_method }.to raise_error(ActiveRecord::RecordInvalid, /Product must exist/)
+        end
       end
     end
 
     context 'with a variant row, a product and a source file' do
-      let(:context) { { data: data, product: product } }
+      let(:context) do
+        { data: data, product: product }
+      end
       let(:data) { build(:solidus_importer_row_variant, :with_import).data }
       let(:product) { build_stubbed(:product, slug: data['Handle']) }
-      let(:variant) { Spree::Variant.last }
-      let(:result) do
-        { data: data, success: true, product: product, variant: variant, new_record: true, messages: '' }
-      end
+      let(:result) { context.merge(variant: Spree::Variant.last) }
 
       before do
         allow(product).to receive(:touch)
@@ -45,25 +40,25 @@ RSpec.describe SolidusImporter::Processors::Variant do
         expect(described_method).to eq(result)
       end
 
-      context 'with an existing variant' do
+      context 'with an existing valid variant' do
         let!(:variant) { create(:variant, sku: data['Variant SKU'], weight: 10.0) }
-
-        before { result[:new_record] = false }
 
         it 'updates the variant' do
           expect { described_method }.not_to(change { Spree::Variant.count })
           expect(described_method).to eq(result)
           expect(variant.reload.weight.to_f).to eq(data['Variant Weight'])
         end
+      end
 
-        context 'with an invalid variant' do
-          before { variant.update_column(:product_id, nil) }
-
-          it "doesn't update the variant" do
-            expect { described_method }.not_to(change { Spree::Variant.count })
-            expect(described_method[:success]).to be_falsey
-            expect(described_method[:messages]).not_to be_empty
+      context 'with an existing invalid variant' do
+        let!(:variant) do
+          create(:variant, sku: data['Variant SKU'], weight: 10.0).tap do |variant|
+            variant.update_column(:product_id, nil)
           end
+        end
+
+        it 'raises an exception' do
+          expect { described_method }.to raise_error(ActiveRecord::RecordInvalid, /Product must exist/)
         end
       end
     end

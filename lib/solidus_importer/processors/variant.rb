@@ -5,36 +5,26 @@ module SolidusImporter
     class Variant < Base
       def call(context)
         @data = context.fetch(:data)
-        @product = context.fetch(:product) if variant?
-        context.merge!(check_data || save_variant)
+        return unless variant?
+
+        product = context.fetch(:product)
+        variant = process_variant(product)
+        context.merge!(variant: variant)
       end
 
       private
 
-      def check_data
-        if !variant?
-          {}
-        elsif !@product&.valid?
-          { success: false, messages: 'Parent entity must be a valid product' }
+      def prepare_variant(product)
+        Spree::Variant.find_or_initialize_by(sku: @data['Variant SKU']) do |variant|
+          variant.product = product
+        end.tap do |variant|
+          # Apply the row attributes
+          variant.weight = @data['Variant Weight'] unless @data['Variant Weight'].nil?
         end
       end
 
-      def prepare_variant
-        variant = Spree::Variant.find_or_initialize_by(sku: @data['Variant SKU']) do |var|
-          var.product = @product
-        end
-        variant.weight = @data['Variant Weight'] unless @data['Variant Weight'].nil?
-        variant
-      end
-
-      def save_variant
-        variant = prepare_variant
-        {
-          new_record: variant.new_record?,
-          success: variant.save,
-          variant: variant,
-          messages: variant.errors.full_messages.join(', ')
-        }
+      def process_variant(product)
+        prepare_variant(product).tap(&:save!)
       end
 
       def variant?
