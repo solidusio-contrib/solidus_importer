@@ -51,6 +51,17 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     end
   end
 
+  context 'with an invalid products file' do
+    let(:import_file) { solidus_importer_fixture_path('invalid_product.csv') }
+    let(:import_type) { :products }
+    let!(:shipping_category) { create(:shipping_category) }
+
+    it 'fails to import the product' do
+      expect { import }.not_to change(Spree::Product, :count)
+      expect(import.rows.first.messages).to eq("Validation failed: Name can't be blank")
+    end
+  end
+
   context 'with a orders file' do
     let(:import_file) { solidus_importer_fixture_path('orders.csv') }
     let(:import_type) { :orders }
