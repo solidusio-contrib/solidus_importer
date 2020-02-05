@@ -8,14 +8,6 @@ RSpec.describe SolidusImporter::Processors::Customer do
 
     let(:context) { {} }
 
-    context 'without customer row data' do
-      let(:result_error) { { success: false, messages: 'Missing input data' } }
-
-      it 'returns an error context' do
-        expect(described_method).to eq(result_error)
-      end
-    end
-
     context 'without customer email in row data' do
       let(:context) { { data: data } }
       let(:data) { 'Some data' }
@@ -30,7 +22,7 @@ RSpec.describe SolidusImporter::Processors::Customer do
       let(:context) { { data: data } }
       let(:data) { build(:solidus_importer_row_customer, :with_import).data }
       let(:user) { Spree::User.last }
-      let(:result) { { data: data, entity: user, new_record: true, success: true } }
+      let(:result) { { data: data, success: true, user: user, new_record: true, messages: '' } }
 
       it 'creates a new user' do
         expect { described_method }.to change { Spree::User.count }.by(1)
@@ -38,7 +30,7 @@ RSpec.describe SolidusImporter::Processors::Customer do
       end
 
       context 'with an existing user' do
-        let(:result) { { data: data, entity: user, new_record: false, success: true } }
+        let(:result) { { data: data, user: user, new_record: false, messages: '', success: true } }
         let!(:user) { create(:user) }
 
         before { allow(Spree::User).to receive(:find_or_initialize_by).and_return(user) }

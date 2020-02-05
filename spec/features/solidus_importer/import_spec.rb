@@ -29,14 +29,24 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:import_type) { :products }
     let(:csv_file_rows) { 7 }
     let(:product_slug) { 'hightop-sports-sneaker' }
+    let(:image_url) { 'https://cdn.shopify.com/shopify-marketing_assets/static/tobias-lutke-shopify.jpg' }
     let!(:shipping_category) { create(:shipping_category) }
 
-    it 'imports some products' do
+    before do
+      allow(URI).to receive(:open).and_call_original
+      allow(URI).to receive(:open).with(image_url) do
+        File.open(solidus_importer_fixture_path('thinking-cat.jpg'))
+      end
+    end
+
+    it 'imports some products' do # rubocop:disable RSpec/MultipleExpectations
       expect { import }.to change(Spree::Product, :count).by(1)
       product = Spree::Product.last
       expect(product.variants.count).to eq(3)
       expect(product.slug).to eq(product_slug)
       expect(import.state).to eq('completed')
+      expect(Spree::Product.last.images).not_to be_empty
+      expect(Spree::Variant.last.images).not_to be_empty
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
     end
   end

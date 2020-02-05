@@ -4,7 +4,7 @@ module SolidusImporter
   module Processors
     class Order < Base
       def call(context)
-        @data = context[:data]
+        @data = context.fetch(:data)
         context.merge!(check_data || save_order)
       end
 
@@ -17,11 +17,7 @@ module SolidusImporter
       private
 
       def check_data
-        if @data.blank?
-          { success: false, messages: 'Missing input data' }
-        elsif @data['Name'].blank?
-          { success: false, messages: 'Missing required key: "Name"' }
-        end
+        { success: false, messages: 'Missing required key: "Name"' } if @data['Name'].blank?
       end
 
       def prepare_order
@@ -36,7 +32,12 @@ module SolidusImporter
 
       def save_order
         order = prepare_order
-        prepare_context(entity: order, new_record: order.new_record?, success: order.save)
+        {
+          new_record: order.new_record?,
+          success: order.save,
+          order: order,
+          messages: order.errors.full_messages.join(', ')
+        }
       end
     end
   end

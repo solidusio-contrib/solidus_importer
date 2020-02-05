@@ -8,14 +8,6 @@ RSpec.describe SolidusImporter::Processors::Product do
 
     let(:context) { {} }
 
-    context 'without product row data' do
-      let(:result_error) { { success: false, messages: 'Missing input data' } }
-
-      it 'returns an error context' do
-        expect(described_method).to eq(result_error)
-      end
-    end
-
     context 'without product slug in row data' do
       let(:context) { { data: data } }
       let(:data) { 'Some data' }
@@ -30,7 +22,7 @@ RSpec.describe SolidusImporter::Processors::Product do
       let(:context) { { data: data } }
       let(:data) { build(:solidus_importer_row_product, :with_import).data }
       let(:product) { Spree::Product.last }
-      let(:result) { { data: data, entity: product, new_record: true, success: true } }
+      let(:result) { { data: data, success: true, product: product, new_record: true, messages: '' } }
       let(:shipping_category) { create(:shipping_category) }
 
       before { shipping_category }
@@ -41,7 +33,7 @@ RSpec.describe SolidusImporter::Processors::Product do
       end
 
       context 'with an existing product' do
-        let(:result) { { data: data, entity: product, new_record: false, success: true } }
+        let(:result) { { data: data, product: product, new_record: false, messages: '', success: true } }
         let!(:product) { create(:product, slug: data['Handle']) }
 
         it 'updates the product' do
