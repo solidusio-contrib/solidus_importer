@@ -13,10 +13,13 @@ module SolidusImporter
 
     def process(initial_context)
       context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
-      @importer.processors.inject(context) do |ctx, processor|
-        next {} if ctx[:success] == false && !processor.ensure_call
-
-        processor.call(ctx)
+      @importer.processors.each do |processor|
+        begin
+          processor.call(context)
+        rescue StandardError => e
+          context.merge!(success: false, messages: e.message) # rubocop:disable Performance/RedundantMerge
+          break
+        end
       end
       @row.update!(
         state: context[:success] ? :completed : :failed,
