@@ -5,40 +5,25 @@ module SolidusImporter
     class VariantImages < Base
       def call(context)
         @data = context.fetch(:data)
-        @variant = context.fetch(:variant) if variant_image?
-        context.merge!(check_data || save_images)
+        return unless variant_image?
+
+        variant = context.fetch(:variant)
+        process_images(variant)
       end
 
       private
 
-      def check_data
-        if !variant_image?
-          {}
-        elsif @variant.blank?
-          { success: false, messages: 'Missing required target variant' }
-        end
-      end
-
       def prepare_image
         attachment = URI.open(@data['Variant Image'])
         Spree::Image.new(attachment: attachment)
-      rescue StandardError => e
-        @messages = e.message
-        nil
       end
 
-      def save_images
-        image = prepare_image
-        if image
-          @variant.images << image
-          { success: true }
-        else
-          { success: false, messages: @messages || @variant.errors.full_messages.join(', ') }
-        end
+      def process_images(variant)
+        variant.images << prepare_image
       end
 
       def variant_image?
-        @data['Variant Image'].present?
+        @variant_image ||= @data['Variant Image'].present?
       end
     end
   end
