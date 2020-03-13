@@ -15,10 +15,4 @@ RSpec.describe SolidusImporter::Processors::Log do
       expect(Spree::LogEntry).to have_received(:create!)
     end
   end
-
-  describe '.ensure_call' do
-    subject(:described_method) { described_class.ensure_call }
-
-    it { is_expected.to be_truthy }
-  end
 end

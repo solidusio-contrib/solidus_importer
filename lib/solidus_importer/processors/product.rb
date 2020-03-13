@@ -5,7 +5,8 @@ module SolidusImporter
     class Product < Base
       def call(context)
         @data = context.fetch(:data)
-        context.merge!(check_data || save_product)
+        check_data
+        context.merge!(product: process_product)
       end
 
       def options
@@ -18,35 +19,26 @@ module SolidusImporter
       private
 
       def check_data
-        if @data['Handle'].blank?
-          { success: false, messages: 'Missing required key: "Handle"' }
-        elsif @data['Variant SKU'].present?
-          { product: load_product }
-        end
-      end
-
-      def load_product
-        Spree::Product.find_by(slug: @data['Handle'])
+        raise SolidusImporter::Exception, 'Missing required key: "Handle"' if @data['Handle'].blank?
       end
 
       def prepare_product
-        product = load_product || Spree::Product.new do |prod|
-          prod.slug = @data['Handle']
-          prod.price = options[:price]
-          prod.shipping_category = options[:shipping_category]
+        Spree::Product.find_or_initialize_by(slug: @data['Handle']) do |product|
+          product.slug = @data['Handle']
+          product.price = options[:price]
+          product.shipping_category = options[:shipping_category]
+        end.tap do |product|
+          # Apply the row attributes
+          product.name = @data['Title'] unless @data['Title'].nil?
         end
-        product.name = @data['Title'] unless @data['Title'].nil?
-        product
       end
 
-      def save_product
-        product = prepare_product
-        {
-          new_record: product.new_record?,
-          success: product.save,
-          product: product,
-          messages: product.errors.full_messages.join(', ')
-        }
+      def process_product
+        if @data['Variant SKU'].present?
+          Spree::Product.find_by!(slug: @data['Handle'])
+        else
+          prepare_product.tap(&:save!)
+        end
       end
     end
   end

@@ -9,20 +9,21 @@ RSpec.describe SolidusImporter::Processors::Order do
     let(:context) { {} }
 
     context 'without order number in row data' do
-      let(:context) { { data: data } }
-      let(:data) { 'Some data' }
-      let(:result_error) { { data: data, success: false, messages: 'Missing required key: "Name"' } }
+      let(:context) do
+        { data: 'Some data' }
+      end
 
-      it 'returns an error context' do
-        expect(described_method).to eq(result_error)
+      it 'raises an exception' do
+        expect { described_method }.to raise_error(SolidusImporter::Exception, 'Missing required key: "Name"')
       end
     end
 
     context 'with an order row with a file entity' do
-      let(:context) { { data: data } }
+      let(:context) do
+        { data: data }
+      end
       let(:data) { build(:solidus_importer_row_order, :with_import).data }
-      let(:order) { Spree::Order.last }
-      let(:result) { { data: data, success: true, order: order, new_record: true, messages: '' } }
+      let(:result) { context.merge(order: Spree::Order.last) }
 
       before { allow(Spree::Store).to receive(:default).and_return(build_stubbed(:store)) }
 
@@ -31,8 +32,7 @@ RSpec.describe SolidusImporter::Processors::Order do
         expect(described_method).to eq(result)
       end
 
-      context 'with an existing order' do
-        let(:result) { { data: data, order: order, new_record: false, messages: '', success: true } }
+      context 'with an existing valid order' do
         let!(:order) { create(:order, number: data['Name'], email: data['Email']) }
 
         it 'updates the order' do
@@ -40,11 +40,15 @@ RSpec.describe SolidusImporter::Processors::Order do
           expect(described_method).to eq(result)
           expect(order.reload.email).to eq('an_email@example.com')
         end
+      end
 
-        context 'with an invalid order' do
-          before { order.update_column(:state, 'an invalid state') }
+      context 'with an existing invalid order' do
+        let!(:order) { create(:order, number: data['Name'], email: data['Email']) }
 
-          it { expect(described_method[:success]).to be_falsey }
+        before { order.update_column(:state, 'an invalid state') }
+
+        it 'raises an exception' do
+          expect { described_method }.to raise_error(ActiveRecord::RecordInvalid, /State is invalid/)
         end
       end
     end
