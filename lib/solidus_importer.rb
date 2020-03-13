@@ -5,6 +5,9 @@ require 'solidus_support'
 
 require 'solidus_importer/version'
 require 'solidus_importer/exception'
+require 'solidus_importer/log'
+require 'solidus_importer/base_logger'
+require 'solidus_importer/solidus_logger'
 require 'solidus_importer/base_importer'
 
 require 'solidus_importer/processors/base'

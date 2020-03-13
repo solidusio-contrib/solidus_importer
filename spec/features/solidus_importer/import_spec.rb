@@ -7,8 +7,9 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
 
   let(:import_file) {}
   let(:import_type) {}
+  let(:logger) { instance_double(SolidusImporter::SolidusLogger, info: nil) }
 
-  before { allow(Spree::LogEntry).to receive(:create!) }
+  before { allow(SolidusImporter::SolidusLogger).to receive(:new).and_return(logger) }
 
   context 'with a customers source file' do
     let(:import_file) { solidus_importer_fixture_path('customers.csv') }
@@ -20,7 +21,7 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect { import }.to change(Spree::User, :count).by(2)
       expect(Spree::User.where(email: user_emails).count).to eq(2)
       expect(import.state).to eq('completed')
-      expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+      expect(logger).to have_received(:info).exactly(csv_file_rows).times
     end
   end
 
@@ -47,7 +48,7 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(import.state).to eq('completed')
       expect(Spree::Product.last.images).not_to be_empty
       expect(Spree::Variant.last.images).not_to be_empty
-      expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+      expect(logger).to have_received(:info).exactly(csv_file_rows).times
     end
   end
 
@@ -73,7 +74,7 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect { import }.to change(Spree::Order, :count).by(2)
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
       expect(import.state).to eq('completed')
-      expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+      expect(logger).to have_received(:info).exactly(csv_file_rows).times
     end
   end
 end

@@ -12,15 +12,17 @@ module SolidusImporter
     end
 
     def process(initial_context)
-      context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
+      context = initial_context.dup.merge!(importer: @importer, data: @row.data)
       @importer.processors.each do |processor|
         begin
           processor.call(context)
-        rescue StandardError => e
+        rescue => e # rubocop:disable Style/RescueStandardError
+          @importer.process_row_failure(processor, context: context, error: e)
           context.merge!(success: false, messages: e.message) # rubocop:disable Performance/RedundantMerge
           break
         end
       end
+      @importer.logger.info ::SolidusImporter::Log.new(source: @row, context: context)
       @row.update!(
         state: context[:success] ? :completed : :failed,
         messages: context[:messages]

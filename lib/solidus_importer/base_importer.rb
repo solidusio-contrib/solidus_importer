@@ -2,8 +2,17 @@
 
 module SolidusImporter
   class BaseImporter
+    attr_reader :options, :logger
+
     def initialize(options)
       @options = options
+      @logger ||= begin
+        if @options[:logger] && !@options[:logger].is_a?(Class)
+          @options[:logger]
+        else
+          (@options[:logger] || ::SolidusImporter::BaseLogger).new
+        end
+      end
     end
 
     def processors
@@ -18,6 +27,10 @@ module SolidusImporter
     def before_import(initial_context)
       initial_context
     end
+
+    ##
+    # Defines a method called when a process row fails
+    def process_row_failure(_processor, context:, error:); end
 
     ##
     # Defines a method called after the import process is started
