@@ -24,7 +24,9 @@ FactoryBot.define do
   end
 
   factory :solidus_importer_row_customer, class: 'SolidusImporter::Row' do
-    data { { 'Email' => 'an_email@example.com' } }
+    data do
+      { 'Email' => 'an_email@example.com' }.merge(build(:solidus_importer_row_address).data)
+    end
 
     trait :with_import do
       after(:build) do |row|
