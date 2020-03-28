@@ -45,6 +45,8 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(product.variants.count).to eq(3)
       expect(product.slug).to eq(product_slug)
       expect(import.state).to eq('completed')
+      expect(product.images).not_to be_empty
+      expect(product.option_types.count).to eq 2
       expect(Spree::Product.last.images).not_to be_empty
       expect(Spree::Variant.last.images).not_to be_empty
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
