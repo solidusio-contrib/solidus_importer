@@ -23,6 +23,7 @@ module SolidusImporter
           SolidusImporter::Processors::Product,
           SolidusImporter::Processors::Variant,
           SolidusImporter::Processors::OptionTypes,
+          SolidusImporter::Processors::OptionValues,
           SolidusImporter::Processors::ProductImages,
           SolidusImporter::Processors::VariantImages,
           SolidusImporter::Processors::Log
