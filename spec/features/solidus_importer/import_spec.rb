@@ -66,6 +66,53 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     end
   end
 
+  context 'with Shopify Product CSVs' do
+    before do
+      allow(URI).to receive(:open)
+    end
+
+    context 'with the export from Shopify Product CSVs - Apparel' do
+      let(:import_file) { solidus_importer_fixture_path('apparel.csv') }
+      let(:import_type) { :products }
+      let!(:shipping_category) { create(:shipping_category) }
+
+      it 'imports a some products and a blue shirt with no variants' do
+        expect { import }.to change(Spree::Product, :count).from(0)
+        expect(import.state).to eq('completed')
+
+        product = Spree::Product.find_by(slug: 'ocean-blue-shirt')
+
+        expect(product.variants.count).to be_zero
+      end
+    end
+
+    context 'with the export from Shopify Product CSVs - Jewelry' do
+      let(:import_file) { solidus_importer_fixture_path('jewelery.csv') }
+      let(:import_type) { :products }
+      let!(:shipping_category) { create(:shipping_category) }
+
+      it 'imports a some products and a clay pot with two variants' do
+        expect { import }.to change(Spree::Product, :count).from(0)
+        expect(import.state).to eq('completed')
+
+        product = Spree::Product.find_by(slug: 'clay-plant-pot')
+
+        expect(product.variants.count).to eq 2
+      end
+    end
+
+    context 'with the export from Shopify Product CSVs - Home and Garden' do
+      let(:import_file) { solidus_importer_fixture_path('home-and-garden.csv') }
+      let(:import_type) { :products }
+      let!(:shipping_category) { create(:shipping_category) }
+
+      it 'imports a some products' do
+        expect { import }.to change(Spree::Product, :count).from(0)
+        expect(import.state).to eq('completed')
+      end
+    end
+  end
+
   context 'with a orders file' do
     let(:import_file) { solidus_importer_fixture_path('orders.csv') }
     let(:import_type) { :orders }
