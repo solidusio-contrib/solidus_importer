@@ -1,8 +1,32 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :solidus_importer_row_address, class: 'SolidusImporter::Row' do
+    data do
+      {
+        'First Name' => 'John',
+        'Last Name' => 'Doe',
+        'Address1' => 'My Cool Address, n.1',
+        'Address2' => '',
+        'City' => 'My beautiful City',
+        'Zip' => '12345',
+        'Phone' => '(555)-123123123',
+        'Country Code' => 'US',
+        'Province Code' => 'WA'
+      }
+    end
+
+    trait :with_import do
+      after(:build) do |row|
+        row.import = build_stubbed(:solidus_importer_import_orders)
+      end
+    end
+  end
+
   factory :solidus_importer_row_customer, class: 'SolidusImporter::Row' do
-    data { { 'Email Address' => 'an_email@example.com' } }
+    data do
+      { 'Email' => 'an_email@example.com' }.merge(build(:solidus_importer_row_address).data)
+    end
 
     trait :with_import do
       after(:build) do |row|

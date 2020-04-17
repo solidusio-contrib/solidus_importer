@@ -3,9 +3,14 @@
 module SolidusImporter
   module Processors
     class Customer < Base
+      attr_accessor :address
+
       def call(context)
         @data = context.fetch(:data)
         check_data
+
+        self.address = context[:address]
+
         context.merge!(user: process_user)
       end
 
@@ -18,12 +23,13 @@ module SolidusImporter
       private
 
       def check_data
-        raise SolidusImporter::Exception, 'Missing required key: "Email Address"' if @data['Email Address'].blank?
+        raise SolidusImporter::Exception, 'Missing required key: "Email"' if @data['Email'].blank?
       end
 
       def prepare_user
-        Spree::User.find_or_initialize_by(email: @data['Email Address']) do |u|
+        Spree::User.find_or_initialize_by(email: @data['Email']) do |u|
           u.password = options[:password_method].call(u)
+          u.bill_address = address if address.present?
         end
       end
 

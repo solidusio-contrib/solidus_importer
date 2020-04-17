@@ -14,13 +14,13 @@ RSpec.describe SolidusImporter::Processors::Customer do
       end
 
       it 'raises an exception' do
-        expect { described_method }.to raise_error(SolidusImporter::Exception, 'Missing required key: "Email Address"')
+        expect { described_method }.to raise_error(SolidusImporter::Exception, 'Missing required key: "Email"')
       end
     end
 
     context 'with invalid fields in row data' do
       let(:context) do
-        { data: { 'Email Address' => '-' } }
+        { data: { 'Email' => '-' } }
       end
 
       it 'raises an exception' do

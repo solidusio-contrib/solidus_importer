@@ -12,7 +12,7 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
 
   let(:processor_create_user) do
     ->(context) {
-      user = Spree::User.new(email: context[:data]['Email Address'])
+      user = Spree::User.new(email: context[:data]['Email'])
       user.password = 'a very secure password'
       context.merge!(success: user.save, user: user)
     }
