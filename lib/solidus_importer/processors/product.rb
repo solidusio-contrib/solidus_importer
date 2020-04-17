@@ -23,21 +23,20 @@ module SolidusImporter
       end
 
       def prepare_product
-        Spree::Product.find_or_initialize_by(slug: @data['Handle']) do |product|
-          product.slug = @data['Handle']
-          product.price = options[:price]
-          product.shipping_category = options[:shipping_category]
-        end.tap do |product|
-          # Apply the row attributes
-          product.name = @data['Title'] unless @data['Title'].nil?
-        end
+        Spree::Product.find_or_initialize_by(slug: @data['Handle'])
       end
 
       def process_product
-        if @data['Variant SKU'].present?
-          Spree::Product.find_by!(slug: @data['Handle'])
-        else
-          prepare_product.tap(&:save!)
+        prepare_product.tap do |product|
+          product.slug = @data['Handle']
+          product.price = options[:price]
+          product.shipping_category = options[:shipping_category]
+
+          # Apply the row attributes
+          product.name = @data['Title'] unless @data['Title'].nil?
+
+          # Save the product
+          product.save!
         end
       end
     end

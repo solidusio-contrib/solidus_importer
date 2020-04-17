@@ -95,9 +95,11 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
         expect { import }.to change(Spree::Product, :count).from(0)
         expect(import.state).to eq('completed')
 
-        product = Spree::Product.find_by(slug: 'clay-plant-pot')
+        product = Spree::Product.find_by(slug: 'gemstone')
 
         expect(product.variants.count).to eq 2
+        expect(product.variants.find_by(sku: 'gemstone-blue')).to be_present
+        expect(product.variants.find_by(sku: 'gemstone-purple')).to be_present
       end
     end
 
@@ -109,6 +111,12 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       it 'imports a some products' do
         expect { import }.to change(Spree::Product, :count).from(0)
         expect(import.state).to eq('completed')
+
+        product = Spree::Product.find_by(slug: 'clay-plant-pot')
+
+        expect(product.variants.count).to eq 2
+        expect(product.variants.find_by(sku: 'clay-plant-pot-large')).to be_present
+        expect(product.variants.find_by(sku: 'clay-plant-pot-regular')).to be_present
       end
     end
   end

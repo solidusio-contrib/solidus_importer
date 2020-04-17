@@ -41,18 +41,6 @@ RSpec.describe SolidusImporter::Processors::Product do
           expect(product.reload.name).to eq('A product name')
         end
       end
-
-      context 'with an existing invalid product' do
-        let!(:product) do
-          create(:product, slug: data['Handle']).tap { |product| product.update_column(:name, '') }
-        end
-
-        before { data['Title'] = nil }
-
-        it 'raises an exception' do
-          expect { described_method }.to raise_error(ActiveRecord::RecordInvalid, /Name can't be blank/)
-        end
-      end
     end
   end
 end
