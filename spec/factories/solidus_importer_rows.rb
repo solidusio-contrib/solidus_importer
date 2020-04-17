@@ -53,6 +53,14 @@ FactoryBot.define do
         row.import = build_stubbed(:solidus_importer_import_products)
       end
     end
+
+    trait :with_tags do
+      after(:build) { |row| row.data.merge!('Tags' => 'Tag1,Tag2, Tag3') }
+    end
+
+    trait :with_type do
+      after(:build) { |row| row.data.merge!('Type' => 'Type1') }
+    end
   end
 
   factory :solidus_importer_row_variant, class: 'SolidusImporter::Row' do
