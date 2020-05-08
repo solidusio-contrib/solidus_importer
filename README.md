@@ -23,13 +23,8 @@ bundle exec rails g solidus_importer:install
 Sample code to import some products:
 
 ```ruby
-import = SolidusImporter::Import.new(import_type: 'products')
-import.import_file = 'some_path/sample_products.csv'
-import.save
-SolidusImporter::ProcessImport.new(import).process
+SolidusImporter.import! 'some_path/sample_products.csv', type: :products
 ```
-
-To process in background: `SolidusImporter::ImportJob.perform_later(import.id)`
 
 ### Accepted Format
 
