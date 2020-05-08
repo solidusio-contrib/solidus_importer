@@ -70,6 +70,32 @@ Simply add this require statement to your spec_helper:
 
 ```ruby
 require 'solidus_importer/factories'
+
+```
+Sandbox app
+-----------
+
+To run this extension in a sandboxed Solidus application you can run `bin/sandbox`
+The path for the sandbox app is `./sandbox` and `bin/rails` will forward any Rails command
+to `sandbox/bin/rails`.
+
+Example:
+
+```shell
+$ bin/rails server
+=> Booting Puma
+=> Rails 6.0.2.1 application starting in development
+* Listening on tcp://127.0.0.1:3000
+Use Ctrl-C to stop
+```
+
+Releasing
+---------
+
+Your new extension version can be released using `gem-release` like this:
+
+```shell
+bundle exec gem bump -v VERSION --tag --push --remote upstream && gem release
 ```
 
 ## About
