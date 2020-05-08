@@ -38,6 +38,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
           expect { described_method }.to change { Spree::Variant.count }.by(1)
           expect(described_method).to eq(result)
           expect(product.variants.first.weight).to eq 20.0
+          expect(product.variants.first.price).to eq 60.5
         end
       end
 
@@ -50,6 +51,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
           expect { described_method }.not_to(change { Spree::Variant.count })
           expect(described_method).to eq(result)
           expect(product.master.weight).to eq 20.0
+          expect(product.master.price).to eq 60.5
         end
       end
 
@@ -62,12 +64,13 @@ RSpec.describe SolidusImporter::Processors::Variant do
           expect { described_method }.not_to(change { Spree::Variant.count })
           expect(described_method).to eq(result)
           expect(product.master.weight).to eq 20.0
+          expect(product.master.price).to eq 60.5
         end
       end
 
       context 'with an existing valid variant' do
         let(:result) { context.merge(variant: variant) }
-        let!(:variant) { create(:variant, sku: data['Variant SKU'], weight: 10.0) }
+        let!(:variant) { create(:variant, sku: data['Variant SKU'], price: 0, weight: 10.0) }
 
         before { data.merge! 'Option1 Value' => 'Some value' }
 
@@ -75,6 +78,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
           expect { described_method }.not_to(change { Spree::Variant.count })
           expect(described_method).to eq(result)
           expect(variant.reload.weight.to_f).to eq(data['Variant Weight'])
+          expect(variant.reload.price).to eq(data['Variant Price'])
         end
       end
     end
