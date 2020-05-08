@@ -23,12 +23,32 @@ RSpec.describe SolidusImporter::Processors::Product do
         { data: data }
       end
       let(:data) { build(:solidus_importer_row_product, :with_import).data }
-      let(:result) { context.merge(product: Spree::Product.last) }
+      let(:product) { Spree::Product.last }
+      let(:result) { context.merge(product: product) }
       let!(:shipping_category) { create(:shipping_category) }
 
       it 'creates a new product' do
         expect { described_method }.to change { Spree::Product.count }.by(1)
         expect(described_method).to eq(result)
+        expect(product).not_to be_available
+      end
+
+      context 'when "Published" is "true"' do
+        before { data.merge! 'Published' => 'true' }
+
+        it 'creates an available product' do
+          described_method
+          expect(product).to be_available
+        end
+      end
+
+      context 'when "Published" is false' do
+        before { data.merge! 'Published' => 'false' }
+
+        it 'creates an available product' do
+          described_method
+          expect(product).not_to be_available
+        end
       end
 
       context 'with an existing valid product' do
