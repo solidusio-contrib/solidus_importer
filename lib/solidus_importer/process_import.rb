@@ -11,7 +11,7 @@ module SolidusImporter
 
     def initialize(import, importer_options: nil)
       @import = import
-      options = importer_options || ::SolidusImporter::Config.solidus_importer[@import.import_type.to_sym]
+      options = importer_options || options_for(import: @import)
       @importer = options[:importer].new(options)
       @import.importer = @importer
       validate!
@@ -83,6 +83,10 @@ module SolidusImporter
     def validate!
       raise ::SolidusImporter::Exception, 'Valid import entity required' if !@import || !@import.valid?
       raise ::SolidusImporter::Exception, "No importer found for #{@import.import_type} type" if !@importer
+    end
+
+    def options_for(import:)
+      ::SolidusImporter::Config[import.import_type.to_sym]
     end
   end
 end
