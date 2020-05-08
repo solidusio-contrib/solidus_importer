@@ -31,6 +31,71 @@ SolidusImporter::ProcessImport.new(import).process
 
 To process in background: `SolidusImporter::ImportJob.perform_later(import.id)`
 
+### Accepted Format
+
+The accepted format is the [Shopify CSV](https://help.shopify.com/en/manual/products/import-export/using-csv) for which is also relatively easy to find exporters for every major platform (e.g. [shopify_transporter](https://github.com/Shopify/shopify_transporter)).
+
+There are three supported CSV types:
+
+1. [Product](https://help.shopify.com/en/manual/migrating-to-shopify/transporter-app/csv-products)
+2. [Order](https://help.shopify.com/en/manual/migrating-to-shopify/transporter-app/csv-orders)
+3. [Customer](https://help.shopify.com/en/manual/migrating-to-shopify/transporter-app/csv-customers)
+
+### The Processors
+
+The importing is managed by a list of processors for each CSV type, the default processors are:
+
+```rb
+customers: {
+  importer: SolidusImporter::BaseImporter,
+  processors: [
+    SolidusImporter::Processors::Address,
+    SolidusImporter::Processors::Customer,
+    SolidusImporter::Processors::Log
+  ]
+},
+orders: {
+  importer: SolidusImporter::BaseImporter,
+  processors: [
+    SolidusImporter::Processors::Order,
+    SolidusImporter::Processors::Log
+  ]
+},
+products: {
+  importer: SolidusImporter::BaseImporter,
+  processors: [
+    SolidusImporter::Processors::Product,
+    SolidusImporter::Processors::Variant,
+    SolidusImporter::Processors::OptionTypes,
+    SolidusImporter::Processors::OptionValues,
+    SolidusImporter::Processors::ProductImages,
+    SolidusImporter::Processors::VariantImages,
+    SolidusImporter::Processors::Log
+  ]
+}
+```
+
+Each processor is a callable that will accept a context Hash. It will perform its function within the `#call(context)` method and will return an equally valid context Hash. The returned context can be augmented with additional data.
+
+Example:
+
+```rb
+CUSTOM_LOGGER = Logger.new(Rails.root.join('log/importer.log'))
+CustomLoggerProcessor = ->(context) {
+  context.merge(logger: CUSTOM_LOGGER)
+}
+# Replace the original Log processor with CustomLoggerProcessor
+SolidusImporter::Config.solidus_importer[:customers][:processors].map! do |processor|
+  if processor == 'SolidusImporter::Processors::Log'
+    'CustomLoggerProcessor'
+  else
+    processors
+  end
+end
+```
+
+Each list of processors can be configured to add, remove, or replace any of the default processors.
+
 ## Configuration
 
 To define your own processors (in this example for products), add to the spree
