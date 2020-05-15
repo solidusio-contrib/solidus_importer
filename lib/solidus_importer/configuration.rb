@@ -31,5 +31,9 @@ module SolidusImporter
         ]
       }
     }
+
+    def available_types
+      solidus_importer.keys
+    end
   end
 end

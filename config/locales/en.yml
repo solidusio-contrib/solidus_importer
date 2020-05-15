@@ -14,7 +14,14 @@ en:
       updated_at: Updated at
       updated_at_from: 'Updated at: start date'
       updated_at_to: 'Updated at: end date'
+      import_types:
+        customers: Customers
+        orders: Orders
+        products: Products
 
     admin:
       tab:
         solidus_importer: *solidus_importer_title
+      solidus_importer:
+        create: Import!
+        new: New import

@@ -6,6 +6,12 @@ admin_breadcrumb(
 )
 %>
 
+<% content_for :page_actions do %>
+  <li>
+    <%= link_to t('spree.admin.solidus_importer.new'), new_admin_solidus_importer_import_url, id: 'admin_new_order', class: 'btn btn-primary' %>
+  </li>
+<% end if can? :create, SolidusImporter::Import %>
+
 <% content_for :table_filter do %>
   <%= search_form_for [:admin, @search], url: admin_solidus_importer_imports_path do |f| %>
     <div class="row">
