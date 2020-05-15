@@ -12,6 +12,7 @@ Rails/SkipsModelValidations:
   Exclude:
     - db/migrate/**/*
     - spec/**/*
+    - sandbox/**/*
 
 RSpec/LetSetup:
   Enabled: false

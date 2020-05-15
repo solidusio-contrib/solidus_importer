@@ -64,7 +64,14 @@ FactoryBot.define do
   end
 
   factory :solidus_importer_row_variant, class: 'SolidusImporter::Row' do
-    data { { 'Handle' => 'a-product-slug-2', 'Variant SKU' => 'a-variant-sku', 'Variant Weight' => 20.0 } }
+    data do
+      {
+        'Handle' => 'a-product-slug-2',
+        'Variant SKU' => 'a-variant-sku',
+        'Variant Weight' => 20.0,
+        'Variant Price' => 60.5
+      }
+    end
 
     trait :with_import do
       after(:build) do |row|

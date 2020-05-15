@@ -15,3 +15,11 @@ require 'solidus_importer/configuration'
 require 'solidus_importer/engine'
 require 'solidus_importer/process_import'
 require 'solidus_importer/process_row'
+
+module SolidusImporter
+  class << self
+    def import!(import_path, type:)
+      ProcessImport.import_from_file(import_path, type.to_sym)
+    end
+  end
+end

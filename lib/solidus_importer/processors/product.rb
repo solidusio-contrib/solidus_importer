@@ -11,6 +11,8 @@ module SolidusImporter
 
       def options
         @options ||= {
+          available_on: Date.current.yesterday,
+          not_available: nil,
           price: 0,
           shipping_category: Spree::ShippingCategory.find_by(name: 'Default') || Spree::ShippingCategory.first
         }
@@ -30,6 +32,7 @@ module SolidusImporter
         prepare_product.tap do |product|
           product.slug = @data['Handle']
           product.price = options[:price]
+          product.available_on = available? ? options[:available_on] : options[:not_available]
           product.shipping_category = options[:shipping_category]
 
           # Apply the row attributes
@@ -38,6 +41,10 @@ module SolidusImporter
           # Save the product
           product.save!
         end
+      end
+
+      def available?
+        @data['Published'] == 'true'
       end
     end
   end
