@@ -5,6 +5,7 @@ module Spree
     module SolidusImporter
       class ImportsController < ResourceController
         before_action :assigns_import_types
+        after_action :import!, if: -> { @import.valid? }, only: :create
 
         def index
           @search = ::SolidusImporter::Import.ransack(params[:q])
@@ -21,6 +22,10 @@ module Spree
         end
 
         private
+
+        def import!
+          ::SolidusImporter::ImportJob.perform_later(@import.id)
+        end
 
         def model_class
           ::SolidusImporter::Import

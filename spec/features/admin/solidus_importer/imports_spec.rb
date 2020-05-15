@@ -44,6 +44,8 @@ RSpec.describe 'Imports', type: :feature do
     let(:no_import_type) { false }
 
     before do
+      allow(::SolidusImporter::ImportJob).to receive(:perform_later)
+
       visit described_path
       import_file.set products_csv_file
       import_type.click unless no_import_type
@@ -51,6 +53,7 @@ RSpec.describe 'Imports', type: :feature do
     end
 
     it 'creates a new import' do
+      expect(::SolidusImporter::ImportJob).to have_received(:perform_later)
       expect(page).to have_content('Import has been successfully created!')
     end
 
