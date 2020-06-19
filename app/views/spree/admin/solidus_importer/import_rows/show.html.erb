@@ -1,0 +1,46 @@
+<%
+admin_layout('full-width')
+import_id = @import_row.import_id
+admin_breadcrumb(
+  t('spree.solidus_importer.title'),
+  link_to(t('spree.solidus_importer.imports'), admin_solidus_importer_imports_path),
+  link_to(import_id.to_s, admin_solidus_importer_import_path(id: import_id)),
+  t('spree.solidus_importer.import_rows'),
+  @import_row.id.to_s
+)
+%>
+
+<div data-hook="admin_solidus_importer_import_rows_show">
+  <dl>
+    <dt><%= t('spree.id') %></dt>
+    <dd><%= @import_row.id %></dd>
+    <dt><%= t('spree.state') %></dt>
+    <dd class="solidus_importer state-<%= @import_row.state %>"><%= @import_row.state %></dd>
+    <dt><%= t('spree.solidus_importer.created_at') %></dt>
+    <dd><%= @import_row.created_at %></dd>
+    <dt><%= t('spree.solidus_importer.updated_at') %></dt>
+    <dd><%= @import_row.updated_at %></dd>
+    <dt><%= t('spree.solidus_importer.messages') %></dt>
+    <dd><%= @import_row.messages.blank? ? '-' : @import_row.messages %></dd>
+    <% if @log_details %>
+      <dt><%= t('spree.solidus_importer.log_entry') %></dt>
+      <dd><%= @log_details %></dd>
+    <% end %>
+    <% if @target_entity %>
+      <dt><%= t('spree.solidus_importer.target_entity') %></dt>
+      <dd>
+        <%= link_to("#{@target_entity.class} ##{@target_entity.id}", url_for([:admin, @target_entity])) rescue '-' %>
+      </dd>
+    <% end %>
+    <dt><%= t('spree.solidus_importer.data') %></dt>
+  </dl>
+
+  <table class="table">
+    <% @import_row.data.each do |k, v| %>
+    <tr class="import_row_attribute">
+      <td class="key"><%= k %></td>
+      <td class="value"><%= v %></td>
+    </tr>
+    <% end %>
+  </table>
+</div>

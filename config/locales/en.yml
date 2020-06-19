@@ -1,5 +1,27 @@
-# Sample localization file for English. Add more files in this directory for other locales.
-# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
-
 en:
-  hello: Hello world
+  spree:
+    solidus_importer:
+      created_at: Created at
+      data: Data
+      import: Import
+      imports: Imports
+      import_rows: Import rows
+      log_entry: Log information
+      messages: Messages
+      target_entity: Target entity
+      title: &solidus_importer_title
+        Solidus Importer
+      updated_at: Updated at
+      updated_at_from: 'Updated at: start date'
+      updated_at_to: 'Updated at: end date'
+      import_types:
+        customers: Customers
+        orders: Orders
+        products: Products
+
+    admin:
+      tab:
+        solidus_importer: *solidus_importer_title
+      solidus_importer:
+        create: Import!
+        new: New import

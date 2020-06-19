@@ -1,0 +1,83 @@
+<%
+admin_layout('full-width')
+admin_breadcrumb(
+  t('spree.solidus_importer.title'),
+  t('spree.solidus_importer.imports')
+)
+%>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= link_to t('spree.admin.solidus_importer.new'), new_admin_solidus_importer_import_url, id: 'admin_new_order', class: 'btn btn-primary' %>
+  </li>
+<% end if can? :create, SolidusImporter::Import %>
+
+<% content_for :table_filter do %>
+  <%= search_form_for [:admin, @search], url: admin_solidus_importer_imports_path do |f| %>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= label_tag :q_import_type_eq, t('spree.type') %>:
+          <%= f.select :import_type_eq, SolidusImporter::Import.available_types, { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <%= label_tag :q_state_eq, t('spree.state') %>:
+          <%= f.select :state_eq, SolidusImporter::Import.states, { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="input-group">
+          <%= f.text_field :created_at_gt, class: 'datepicker datepicker-from form-control', value: params.dig(:q, :created_at_gt), autocomplete: 'off', placeholder: t('spree.solidus_importer.updated_at_from') %> &nbsp;
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="input-group">
+          <%= f.text_field :created_at_lt, class: 'datepicker datepicker-to form-control', value: params.dig(:q, :created_at_lt), autocomplete: 'off', placeholder: t('spree.solidus_importer.updated_at_to') %> &nbsp;
+        </div>
+      </div>
+      <div class="col-md-2 text-right">
+        <%= button_tag t('spree.filter_results') %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<div data-hook="admin_solidus_importer_imports_index">
+  <%= paginate @imports, theme: 'solidus_admin' %>
+
+  <% if @imports.any? %>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th><%= sort_link @search, :id, t('spree.id') %></th>
+          <th><%= sort_link @search, :import_type, t('spree.type') %></th>
+          <th><%= sort_link @search, :state, t('spree.state') %></th>
+          <th><%= t('spree.solidus_importer.import_rows') %></th>
+          <th><%= sort_link @search, :updated_at, t('spree.solidus_importer.updated_at') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @imports.each do |import| %>
+          <% link_details = admin_solidus_importer_import_path(id: import.id) %>
+          <tr class='solidus_importer_import'>
+            <td><%= link_to import.id.to_s, link_details %></td>
+            <td><%= import.import_type %></td>
+            <td class="solidus_importer state-<%= import.state %>"><%= import.state %></td>
+            <th><%= import.rows.count %></th>
+            <td><%= l(import.updated_at) %></td>
+            <td><%= link_to 'Details', link_details, class: 'fa fa-eye icon_link', 'data-action': 'view' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="no-objects-found">
+      <%= render 'spree/admin/shared/no_objects_found', resource: SolidusImporter::Import %>
+    </div>
+  <% end %>
+
+  <%= paginate @imports, theme: 'solidus_admin' %>
+</div>
