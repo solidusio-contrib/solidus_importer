@@ -1,28 +1,13 @@
-<%
-admin_layout('full-width')
-admin_breadcrumb(
-    t('spree.solidus_importer.title'),
-    link_to(t('spree.solidus_importer.imports'), admin_solidus_importer_imports_path)
-)
-%>
+<% admin_breadcrumb t('spree.solidus_importer.title'), link_to(t('spree.solidus_importer.imports'), admin_solidus_importer_imports_path) %>
 
 <%= form_for [:admin, @import], method: :post, html: { multipart: true } do |f| %>
-  <div data-hook="admin_solidus_importer_import_form_fields">
-    <div class="row">
-      <div class="col-6">
-        <%= f.label :file %><br>
-        <%= f.file_field :file %>
-        <fieldset>
-          <% @import_types.each do |type| %>
-            <label>
-              <%= f.radio_button :import_type, type %>
-              <%= t(type, scope: 'spree.solidus_importer.import_types') %>
-            </label>
-          <% end %>
-          <%= f.button t('spree.admin.solidus_importer.create'), class: 'btn btn-primary' %>
-        </fieldset>
-      </div>
+  <fieldset class="no-border-top">
+    <%= render partial: 'spree/shared/error_messages', locals: { target: @import } %>
+    <%= render partial: 'form', locals: { f: f } %>
+
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= f.submit t('spree.actions.create'), class: 'btn btn-primary' %>
     </div>
-  </div>
+  </fieldset>
 <% end %>
 
