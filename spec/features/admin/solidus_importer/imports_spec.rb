@@ -8,18 +8,14 @@ RSpec.describe 'Imports', type: :feature do
   describe 'New import form' do
     subject(:described_path) { spree.new_admin_solidus_importer_import_path }
 
-    before do
-      visit described_path
-    end
+    before { visit described_path }
 
     let(:import_file) { page.find 'input[name="solidus_importer_import[file]"]' }
-    let(:import_button) do
-      page.find 'button[type="submit"]'
-    end
+    let(:import_button) { page.find '[type="submit"]' }
 
     it 'display import form with available types and "import!" button' do
       expect(import_file).to be_visible
-      expect(page).to have_css('input[name="solidus_importer_import[import_type]"]', count: 3)
+      expect(page).to have_css('select[name="solidus_importer_import[import_type]"] > option', count: 4)
       expect(import_button).to be_visible
     end
   end
@@ -30,25 +26,16 @@ RSpec.describe 'Imports', type: :feature do
     let!(:shipping_method) { create :shipping_method }
 
     let(:import_file) { page.find 'input[name="solidus_importer_import[file]"]' }
-    let(:product_import_type) do
-      page.find 'input[name="solidus_importer_import[import_type]"][value="products"]'
-    end
-    let(:orders_import_type) do
-      page.find 'input[name="solidus_importer_import[import_type]"][value="orders"]'
-    end
-    let(:import_button) do
-      page.find 'button[type="submit"]'
-    end
+    let(:import_button) { page.find '[type="submit"]' }
     let(:products_csv_file) { solidus_importer_fixture_path('products.csv') }
-    let(:import_type) { product_import_type }
-    let(:no_import_type) { false }
+    let(:import_type) { "products" }
 
     before do
       allow(::SolidusImporter::ImportJob).to receive(:perform_later)
 
       visit described_path
       import_file.set products_csv_file
-      import_type.click unless no_import_type
+      select import_type, from: :solidus_importer_import_import_type if import_type
       import_button.click
     end
 
@@ -58,7 +45,7 @@ RSpec.describe 'Imports', type: :feature do
     end
 
     context 'when no import type is selected' do
-      let(:no_import_type) { true }
+      let(:import_type) { nil }
 
       it 'fails creating a new import' do
         expect(page).to have_content("Import type can't be blank")
@@ -66,7 +53,7 @@ RSpec.describe 'Imports', type: :feature do
     end
 
     context 'when the wrong import type is selected', skip: 'Not implemented yet' do
-      let(:import_type) { orders_import_type }
+      let(:import_type) { "orders" }
 
       it 'fails creating a new import' do
         expect(page).to have_content('Import failed!')

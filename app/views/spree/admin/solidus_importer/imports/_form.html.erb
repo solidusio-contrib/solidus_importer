@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-4">
+    <div class="field">
+      <%= f.label :import_type %><br>
+      <%= f.select :import_type, [nil] + @import_types %>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="field">
+      <%= f.label :file %><br>
+      <%= f.file_field :file %>
+    </div>
+  </div>
+</div>

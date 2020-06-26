@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require 'spree/core'
+require 'solidus_importer'
 
 module SolidusImporter
   class Engine < Rails::Engine
-    include SolidusSupport::EngineExtensions::Decorators
+    include SolidusSupport::EngineExtensions
 
     isolate_namespace ::Spree
 
