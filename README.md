@@ -20,6 +20,14 @@ bundle exec rails g solidus_importer:install
 
 ## Usage
 
+The imports can be fully managed from the backend UI, following progress (image processing can take a few seconds for each image).
+
+![Import products CSV from the backend](.readme/import-products-1.gif)
+
+![Look at the newly imported products](.readme/import-products-2.gif)
+
+### From the console
+
 Sample code to import some products:
 
 ```ruby
