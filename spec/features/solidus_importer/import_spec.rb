@@ -20,8 +20,8 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
 
     it 'imports some customers' do
       expect { import }.to change(Spree::User, :count).by(2)
-      expect(Spree::User.where(email: user_emails).count).to eq(2)
       expect(import.state).to eq('completed')
+      expect(Spree::User.where(email: user_emails).count).to eq(2)
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
     end
 
@@ -131,15 +131,51 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
   context 'with a orders file' do
     let(:import_file) { solidus_importer_fixture_path('orders.csv') }
     let(:import_type) { :orders }
-    let(:csv_file_rows) { 4 }
-    let(:order_numbers) { ['#MA-1097', '#MA-1098'] }
+    let(:csv_file_rows) { 3 }
+    let(:order_numbers) { ['#MA-3097', '#MA-3098'] }
     let!(:store) { create(:store) }
+    let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
+    let(:credit_owed_order) { Spree::Order.first }
+    let(:balance_due_order) { Spree::Order.second }
+    let(:payment) { imported_order.payments.first }
+    let!(:variant) { create(:variant, sku: 'a-123') }
+
+    before do
+      create(:variant, sku: 'a-456')
+      create(:variant, sku: 'b-001')
+    end
 
     it 'imports some orders' do
-      expect { import }.to change(Spree::Order, :count).by(2)
+      expect { import }.to change(Spree::Order, :count).from(0).to(2)
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+    end
+
+    it 'import an order with a line items' do
+      import
+      expect(credit_owed_order.line_items).not_to be_blank
+    end
+
+    xit 'import an order with bill and ship addresses' do
+      import
+      expect(credit_owed_order.bill_address).not_to be_blank
+      expect(credit_owed_order.ship_address).not_to be_blank
+      expect(credit_owed_order.bill_address.state).to eq state
+      expect(credit_owed_order.bill_address.country).to eq state.country
+    end
+
+    it 'import the "credit owed" order with payments' do
+      import
+      expect(credit_owed_order.payments).not_to be_empty
+      expect(credit_owed_order.payment_state).to eq 'credit_owed'
+      expect(credit_owed_order.payments.first.state).to eq 'completed'
+      expect(credit_owed_order.payment_total).to eq credit_owed_order.payments.first.amount
+    end
+
+    it 'import the "balance due" order with no transactions' do
+      import
+      expect(balance_due_order.payments).to be_empty
     end
   end
 end
