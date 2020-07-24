@@ -1,3 +1,5 @@
-First Name,Last Name,Email
-Jane,Doe,jane.doe01520022060@example.com
-Jane,Doe,jane.doe11520022060@example.com
+First Name,Last Name,Email,Company,Address1,Address2,City,Province,Province Code,Country,Country Code,Zip,Phone,Accepts Marketing,Tags,Note,Tax Exempt,Metafield Namespace,Metafield Key,Metafield Value,Metafield Value Type
+John,Doe,john.doe@acme.com,Acme Warehouse,57 Erb St W,,Waterloo,Ontario,ON,Canada,CA,N2L 6C2,519-555-5555,true,"repeat_customer,member_since_2017",John wrote a very positive review of our product on his blog.,false,global,vip_status,TRUE,string
+,,john.doe@acme.com,Acme Ltd.,150 Elgin St,Unit 56,Ottawa,Ontario,ON,Canada,CA,K2P 1L4,,,,,,global,email_list,weekly,string
+,,john.doe@acme.com,,,,,,,,,,,,,,,global,corporate,true,string
+Jane,Doe,jane.doe@acme.com,Acme Inc.,490 Rue de la Gauchetière O,,Montreal,Quebec,QC,Canada,CA,H2Z 0B2,613-555-6666,false,,Tendency to return clothing in size 0.,true,global,frequent_returner,TRUE,string

@@ -13,14 +13,21 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
   context 'with a customers source file' do
     let(:import_file) { solidus_importer_fixture_path('customers.csv') }
     let(:import_type) { :customers }
-    let(:csv_file_rows) { 2 }
-    let(:user_emails) { ['jane.doe01520022060@example.com', 'jane.doe11520022060@example.com'] }
+    let(:csv_file_rows) { 4 }
+    let(:user_emails) { ['jane.doe@acme.com', 'john.doe@acme.com'] }
+    let(:imported_customer) { Spree::User.last }
+    let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
 
     it 'imports some customers' do
       expect { import }.to change(Spree::User, :count).by(2)
       expect(Spree::User.where(email: user_emails).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+    end
+
+    it 'import customer with addresses' do
+      import
+      expect(imported_customer.addresses.reload).not_to be_empty
     end
   end
 
