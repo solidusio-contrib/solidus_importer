@@ -12,7 +12,7 @@ module SolidusImporter
     end
 
     def process(initial_context)
-      context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
+      context = initial_context.merge!(row_id: @row.id, importer: @importer, data: @row.data)
       @importer.processors.each do |processor|
         begin
           processor.call(context)
