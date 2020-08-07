@@ -30,7 +30,20 @@ RSpec.describe SolidusImporter::Processors::Customer do
 
     context 'with a customer row with a file entity' do
       let(:context) do
-        { data: build(:solidus_importer_row_customer, :with_import).data }
+        { data: build(:solidus_importer_row_customer, :with_import).data.merge(customer_address_data) }
+      end
+      let(:customer_address_data) do
+        {
+          'First Name' => 'John',
+          'Last Name' => 'Doe',
+          'Address1' => 'My Cool Address, n.1',
+          'Address2' => '',
+          'City' => 'My beautiful City',
+          'Zip' => '12345',
+          'Phone' => '(555)-123123123',
+          'Country Code' => 'US',
+          'Province Code' => 'WA'
+        }
       end
       let(:result) { context.merge(user: Spree::User.last) }
 

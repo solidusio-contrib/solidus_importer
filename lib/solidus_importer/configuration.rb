@@ -6,8 +6,8 @@ module SolidusImporter
       customers: {
         importer: SolidusImporter::BaseImporter,
         processors: [
-          SolidusImporter::Processors::Address,
           SolidusImporter::Processors::Customer,
+          SolidusImporter::Processors::CustomerAddress,
           SolidusImporter::Processors::Log
         ]
       },
