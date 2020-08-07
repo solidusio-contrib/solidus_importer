@@ -4,8 +4,8 @@ module SolidusImporter
   module PostProcessors
     class OrdersRecalculator < SolidusImporter::Processors::Base
       def call(ending_context)
-        ending_context[:orders].each do |order|
-          order.becomes(Spree::Order).recalculate
+        ending_context[:order_ids].each do |id|
+          Spree::Order.find(id).recalculate
         end
       end
     end
