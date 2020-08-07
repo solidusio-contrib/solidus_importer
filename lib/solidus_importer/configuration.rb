@@ -16,6 +16,9 @@ module SolidusImporter
         processors: [
           SolidusImporter::Processors::Order,
           SolidusImporter::Processors::Log
+        ],
+        post_processors: [
+          SolidusImporter::PostProcessors::OrdersRecalculator
         ]
       },
       products: {
