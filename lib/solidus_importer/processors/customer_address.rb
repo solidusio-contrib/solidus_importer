@@ -18,6 +18,8 @@ module SolidusImporter
         user.present? or return
 
         user.addresses << address
+        user.bill_address ||= address
+        user.ship_address ||= address
       end
 
       def country_code

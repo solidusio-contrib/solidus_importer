@@ -29,8 +29,10 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
       expect { described_method }.to change(Spree::Address, :count).by(1)
     end
 
-    it 'adds the address in the user addressbook' do
+    it 'adds the address in the user addressbook and set it as ship/bill address' do
       expect { described_method }.to change(user.addresses, :count).by(1)
+      expect(user.bill_address).to eq address
+      expect(user.ship_address).to eq address
     end
   end
 end
