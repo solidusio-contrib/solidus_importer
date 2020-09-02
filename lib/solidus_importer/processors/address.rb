@@ -7,6 +7,14 @@ module SolidusImporter
         raise NotImplementedError
       end
 
+      def country_code
+        raise NotImplementedError
+      end
+
+      def province_code
+        raise NotImplementedError
+      end
+
       private
 
       def address
@@ -27,12 +35,14 @@ module SolidusImporter
         address
       end
 
-      def extract_country(iso)
-        Spree::Country.find_by(iso: iso)
+      def extract_country(iso = country_code)
+        @extract_country ||= Spree::Country.find_by(iso: iso)
       end
 
-      def extract_state(iso)
-        Spree::State.find_by(abbr: iso) || Spree::State.find_by(name: iso)
+      def extract_state(code = province_code)
+        @extract_state and return @extract_state
+
+        @extract_state ||= extract_country&.states&.find_by(abbr: code)
       end
     end
   end
