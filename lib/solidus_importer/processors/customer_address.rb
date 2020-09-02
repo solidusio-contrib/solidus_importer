@@ -14,9 +14,18 @@ module SolidusImporter
 
         process_address && persist_address
 
-        address.try(:valid?) || return
+        address.try(:valid?) or return
+        user.present? or return
 
-        user.addresses << address if user.present?
+        user.addresses << address
+      end
+
+      def country_code
+        @data['Country Code']
+      end
+
+      def province_code
+        @data['Province Code']
       end
 
       private
@@ -30,8 +39,8 @@ module SolidusImporter
           city: @data['City'],
           zipcode: @data['Zip'],
           phone: @data['Phone'],
-          country: extract_country(@data['Country Code']),
-          state: extract_state(@data['Province Code'])
+          country: extract_country,
+          state: extract_state
         )
       end
     end

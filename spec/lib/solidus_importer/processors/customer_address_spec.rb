@@ -8,8 +8,8 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
 
     let(:context) { { data: data, user: user } }
     let(:user) { create(:user) }
-    let(:country) { create :country, iso: 'US' }
-    let(:state) { create :state, abbr: 'WA' }
+    let!(:state) { create(:state, state_code: 'WA', country_iso: 'US') }
+    let(:country) { state.country }
     let(:data) do
       {
         'First Name' => 'John',
@@ -23,44 +23,14 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
         'Province Code' => 'WA'
       }
     end
+    let(:address) { Spree::Address.last }
 
-    before do
-      country
-      state
-    end
-
-    it 'create an address and adds in the user addressbook' do
+    it 'create an address' do
       expect { described_method }.to change(Spree::Address, :count).by(1)
-                                       .and(change(user.addresses, :size).by(1))
     end
 
-    context 'when the address is already present' do
-      let(:user) {}
-
-      it 'creates an address' do
-        expect { described_method }.to change(Spree::Address, :count).by(1)
-      end
-    end
-
-    context 'when the address is already present' do
-      before do
-        create(:address, {
-                 firstname: 'John',
-                 lastname: 'Doe',
-                 address1: 'My Cool Address, n.1',
-                 address2: '',
-                 city: 'My beautiful City',
-                 zipcode: '12345',
-                 phone: '(555)-123123123',
-                 country_id: country.id,
-                 state_id: state.id
-               })
-      end
-
-      it 'adds the address in user addressbook' do
-        expect { described_method }.not_to change(Spree::Address, :count)
-        expect(user.addresses.size).to eq 1
-      end
+    it 'adds the address in the user addressbook' do
+      expect { described_method }.to change(user.addresses, :count).by(1)
     end
   end
 end
