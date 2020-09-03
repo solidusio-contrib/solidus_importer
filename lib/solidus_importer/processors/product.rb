@@ -14,7 +14,7 @@ module SolidusImporter
           available_on: Date.current.yesterday,
           not_available: nil,
           price: 0,
-          shipping_category: Spree::ShippingCategory.find_by(name: 'Default') || Spree::ShippingCategory.first
+          shipping_category: shipping_category
         }
       end
 

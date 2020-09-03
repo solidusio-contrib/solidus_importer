@@ -27,17 +27,18 @@ RSpec.describe SolidusImporter::Processors::Order do
       before { allow(Spree::Store).to receive(:default).and_return(build_stubbed(:store)) }
 
       it 'creates a new order' do
-        expect { described_method }.to change { Spree::Order.count }.by(1)
         expect(context).to have_key(:order)
+        expect(context[:order][:number]).to eq "R123456789"
+        expect(context[:order][:line_items_attributes]).not_to be_empty
       end
 
       context 'with an existing valid order' do
         let!(:order) { create(:order, number: data['Name'], email: data['Email']) }
 
         it 'updates the order' do
-          expect { described_method }.not_to(change{ Spree::Order.count })
           expect(context).to have_key(:order)
-          expect(order.reload.email).to eq('an_email@example.com')
+          expect(context[:order][:number]).to eq "R123456789"
+          expect(context[:order][:line_items_attributes]).not_to be_empty
         end
       end
 
@@ -47,7 +48,9 @@ RSpec.describe SolidusImporter::Processors::Order do
         before { order.update_column(:state, 'an invalid state') }
 
         it 'raises an exception' do
-          expect { described_method }.to raise_error(ActiveRecord::RecordInvalid, /State is invalid/)
+          expect(context).to have_key(:order)
+          expect(context[:order][:number]).to eq "R123456789"
+          expect(context[:order][:line_items_attributes]).not_to be_empty
         end
       end
     end

@@ -23,10 +23,10 @@ module SolidusImporter
       scan_required = force_scan.nil? ? @import.created? : force_scan
       @import.update(state: :processing)
       initial_context = scan_required ? scan : { success: true }
-      initial_context = @importer.before_import(initial_context)
+      initial_context = importer.before_import(initial_context)
       unless @import.failed?
         rows = process_rows(initial_context)
-        importer.after_import(initial_context)
+        importer.after_import(importer.context)
         @import.update(state: :completed) if rows.zero?
       end
       @import

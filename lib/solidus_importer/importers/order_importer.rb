@@ -3,8 +3,9 @@
 module SolidusImporter
   class OrderImporter < BaseImporter
     def handle_row_result(ending_context)
-      context[:imported_order_ids] ||= []
-      context[:imported_order_ids] << ending_context[:order]&.id
+      context[:imported_orders] ||= []
+      context[:imported_orders] << ending_context[:order]
+      ending_context
     end
   end
 end
