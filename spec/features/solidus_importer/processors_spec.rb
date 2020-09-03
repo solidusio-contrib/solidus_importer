@@ -33,10 +33,10 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
   let(:importer) { importer_class.new(importer_options) }
   let(:importer_class) do
     Class.new(SolidusImporter::BaseImporter) do
-      attr_accessor :checks
+      attr_accessor :success
 
       def after_import(ending_context)
-        ending_context[:importer].checks
+        self.success = ending_context[:success]
       end
     end
   end
@@ -50,5 +50,6 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
   it 'creates 2 users and check the result' do
     expect { process_import }.to change(Spree::User, :count).from(0).to(2)
     expect(importer).to have_received(:after_import)
+    expect(importer.success).to be_truthy
   end
 end

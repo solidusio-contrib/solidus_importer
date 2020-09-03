@@ -76,7 +76,8 @@ module SolidusImporter
     def process_rows(initial_context)
       rows = @import.rows.created_or_failed.order(id: :asc)
       rows.each do |row|
-        ::SolidusImporter::ProcessRow.new(@importer, row).process(initial_context)
+        ctx = ::SolidusImporter::ProcessRow.new(@importer, row).process(initial_context)
+        @importer.handle_row_result(ctx)
       end
       rows.size
     end

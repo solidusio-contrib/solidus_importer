@@ -31,7 +31,7 @@ RSpec.describe SolidusImporter::ProcessRow do
     let(:context) { {} }
 
     it 'preserve the context' do
-      expect(process).to be_equal(context)
+      expect(process).to be_an_instance_of(Hash)
     end
   end
 end

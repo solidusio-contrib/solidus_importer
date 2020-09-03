@@ -29,7 +29,6 @@ RSpec.describe SolidusImporter::Processors::Order do
       it 'creates a new order' do
         expect { described_method }.to change { Spree::Order.count }.by(1)
         expect(context).to have_key(:order)
-        expect(context).to have_key(:order_ids)
       end
 
       context 'with an existing valid order' do
@@ -38,7 +37,6 @@ RSpec.describe SolidusImporter::Processors::Order do
         it 'updates the order' do
           expect { described_method }.not_to(change{ Spree::Order.count })
           expect(context).to have_key(:order)
-          expect(context).to have_key(:order_ids)
           expect(order.reload.email).to eq('an_email@example.com')
         end
       end

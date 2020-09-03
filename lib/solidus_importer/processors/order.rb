@@ -8,8 +8,6 @@ module SolidusImporter
         check_data
 
         context[:order] = process_order
-        context[:order_ids] ||= []
-        context[:order_ids] << context[:order].id
       end
 
       def options

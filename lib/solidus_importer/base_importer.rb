@@ -2,6 +2,8 @@
 
 module SolidusImporter
   class BaseImporter
+    attr_accessor :context
+
     def initialize(options)
       @options = options
     end
@@ -20,7 +22,7 @@ module SolidusImporter
     #
     # - initial_context: context used process the rows, example: `{ success: true }`
     def before_import(initial_context)
-      initial_context
+      initial_context.tap { |ctx| self.context = ctx.dup }
     end
 
     ##
@@ -29,6 +31,10 @@ module SolidusImporter
       post_processors.each do |post_processor|
         post_processor.call(ending_context)
       end
+    end
+
+    def handle_row_result(ending_context)
+      ending_context
     end
   end
 end
