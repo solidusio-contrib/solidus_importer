@@ -26,23 +26,16 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
   let(:import_source) { create(:solidus_importer_import_customers) }
   let(:importer_options) do
     {
-      importer: CustomImporter,
+      importer: importer_class,
       processors: [processor_create_user, processor_check_domain]
     }
   end
-  let(:importer) { CustomImporter.new(importer_options) }
+  let(:importer) { importer_class.new(importer_options) }
+  let(:importer_class) { Class.new(SolidusImporter::BaseImporter) }
 
   before do
-    stub_const('CustomImporter', SolidusImporter::BaseImporter)
-    CustomImporter.class_eval do
-      attr_accessor :checks
-
-      def after_import(ending_context)
-        ending_context[:importer].checks
-      end
-    end
     importer
-    allow(CustomImporter).to receive(:new).and_return(importer)
+    allow(importer_class).to receive(:new).and_return(importer)
     allow(importer).to receive(:after_import).and_call_original
   end
 
