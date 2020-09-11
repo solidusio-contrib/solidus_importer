@@ -3,6 +3,8 @@
 This extension aims to create a component to import data from other popular
 e-commerce solutions to Solidus.
 
+⚠ The importing of orders is still in beta and not reliable ⚠
+
 ## Installation
 
 Add solidus_importer to your Gemfile:
