@@ -21,6 +21,9 @@ module SolidusImporter
           break
         end
       end
+
+      @importer.handle_row_import(context)
+
       @row.update!(
         state: context[:success] ? :completed : :failed,
         messages: context[:messages]
