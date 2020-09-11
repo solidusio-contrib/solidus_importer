@@ -20,7 +20,8 @@ module SolidusImporter
     end
 
     ##
-    # Defines a method called after the import process is started
-    def after_import(_ending_context); end
+    # Defines a method called after the import process is finished
+    def after_import
+    end
   end
 end

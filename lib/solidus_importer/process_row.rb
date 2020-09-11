@@ -34,7 +34,6 @@ module SolidusImporter
     def check_import_finished(context)
       return unless @row.import.finished?
 
-      @importer.after_import(context)
       @row.import.update!(state: (@row.import.rows.failed.any? ? :failed : :completed))
     end
 

@@ -26,6 +26,7 @@ module SolidusImporter
       initial_context = @importer.before_import(initial_context)
       unless @import.failed?
         rows = process_rows(initial_context)
+        @importer.after_import
         @import.update(state: :completed) if rows.zero?
       end
       @import
