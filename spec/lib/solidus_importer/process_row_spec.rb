@@ -21,17 +21,4 @@ RSpec.describe SolidusImporter::ProcessRow do
       it { expect(described_instance).to be_instance_of(described_class) }
     end
   end
-
-  describe '#process' do
-    subject(:process) { described_instance.process(context) }
-
-    let(:row) { create(:solidus_importer_row_order, import: import) }
-    let(:import) { create(:solidus_importer_import_orders) }
-    let(:importer) { SolidusImporter::BaseImporter.new({}) }
-    let(:context) { {} }
-
-    it 'preserve the context' do
-      expect(process).to be_equal(context)
-    end
-  end
 end

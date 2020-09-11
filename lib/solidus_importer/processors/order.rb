@@ -6,10 +6,7 @@ module SolidusImporter
       def call(context)
         @data = context.fetch(:data)
         check_data
-
-        context[:order] = process_order
-        context[:order_ids] ||= []
-        context[:order_ids] << context[:order].id
+        context.merge!(order: process_order)
       end
 
       def options

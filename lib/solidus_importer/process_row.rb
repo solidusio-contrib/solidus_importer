@@ -12,7 +12,7 @@ module SolidusImporter
     end
 
     def process(initial_context)
-      context = initial_context.merge!(row_id: @row.id, importer: @importer, data: @row.data)
+      context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
       @importer.processors.each do |processor|
         begin
           processor.call(context)
@@ -34,6 +34,7 @@ module SolidusImporter
     def check_import_finished(context)
       return unless @row.import.finished?
 
+      @importer.after_import(context)
       @row.import.update!(state: (@row.import.rows.failed.any? ? :failed : :completed))
     end
 

@@ -25,25 +25,16 @@ RSpec.describe SolidusImporter::ProcessImport do
     end
 
     context 'with some rows' do
-      let(:importer) { SolidusImporter::BaseImporter.new({}) }
       let(:process_row) { instance_double(::SolidusImporter::ProcessRow, process: nil) }
       let(:rows) { build_list(:solidus_importer_row_customer, 3) }
       let(:import) { create(:solidus_importer_import_customers, rows: rows) }
 
       before do
         allow(::SolidusImporter::ProcessRow).to receive_messages(new: process_row)
-        allow(SolidusImporter::BaseImporter).to receive(:new).and_return(importer)
-      end
-
-      it do
-        described_method
-        expect(::SolidusImporter::ProcessRow).to have_received(:new).exactly(rows_count).times
-      end
-
-      it 'calls after_import' do
-        expect(importer).to receive(:after_import)
         described_method
       end
+
+      it { expect(::SolidusImporter::ProcessRow).to have_received(:new).exactly(rows_count).times }
     end
 
     context 'with completed rows' do
