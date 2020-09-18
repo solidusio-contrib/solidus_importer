@@ -8,8 +8,8 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
 
     let(:context) { { data: data, user: user } }
     let(:user) { create(:user) }
-    let(:country) { create :country, iso: 'US' }
-    let(:state) { create :state, abbr: 'WA' }
+    let!(:state) { create(:state, state_code: 'WA', country_iso: 'US') }
+    let(:country) { state.country }
     let(:data) do
       {
         'First Name' => 'John',
@@ -23,44 +23,45 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
         'Province Code' => 'WA'
       }
     end
+    let(:address) { Spree::Address.last }
 
-    before do
-      country
-      state
-    end
+    context 'when there is a state with the same code attached to another country' do
+      let!(:wrong_state) { create(:state, state_code: 'WA', country_iso: 'IT') }
+      let!(:state) { create(:state, state_code: 'XX', country_iso: 'US') }
 
-    it 'create an address and adds in the user addressbook' do
-      expect { described_method }.to change(Spree::Address, :count).by(1)
-                                       .and(change(user.addresses, :size).by(1))
-    end
-
-    context 'when the address is already present' do
-      let(:user) {}
-
-      it 'creates an address' do
+      it 'tries to fetch it from the current country' do
         expect { described_method }.to change(Spree::Address, :count).by(1)
+        expect(Spree::Address.last.state).to be_nil
+      end
+
+      context 'when the country requires a states' do
+        before { country.update states_required: true }
+
+        it 'fails creating the address' do
+          expect { described_method }.not_to change(Spree::Address, :count)
+        end
       end
     end
 
-    context 'when the address is already present' do
-      before do
-        create(:address, {
-                 firstname: 'John',
-                 lastname: 'Doe',
-                 address1: 'My Cool Address, n.1',
-                 address2: '',
-                 city: 'My beautiful City',
-                 zipcode: '12345',
-                 phone: '(555)-123123123',
-                 country_id: country.id,
-                 state_id: state.id
-               })
-      end
+    it 'create an address' do
+      expect { described_method }.to change(Spree::Address, :count).by(1)
 
-      it 'adds the address in user addressbook' do
-        expect { described_method }.not_to change(Spree::Address, :count)
-        expect(user.addresses.size).to eq 1
+      aggregate_failures do
+        expect(address.full_name).to eq("John Doe")
+        expect(address.address1).to eq('My Cool Address, n.1')
+        expect(address.address2).to eq('')
+        expect(address.city).to eq('My beautiful City')
+        expect(address.zipcode).to eq('12345')
+        expect(address.phone).to eq('(555)-123123123')
+        expect(address.country).to eq(country)
+        expect(address.state).to eq(state)
       end
+    end
+
+    it 'adds the address in the user addressbook and set it as ship/bill address' do
+      expect { described_method }.to change(user.addresses, :count).by(1)
+      expect(user.bill_address).to eq address
+      expect(user.ship_address).to eq address
     end
   end
 end

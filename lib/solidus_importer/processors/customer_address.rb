@@ -1,28 +1,33 @@
 # frozen_string_literal: true
 
-require_relative 'address'
-
 module SolidusImporter
   module Processors
-    class CustomerAddress < Address
-      attr_accessor :user
-
+    class CustomerAddress < Base
       def call(context)
         @data = context.fetch(:data)
 
-        self.user = context.fetch(:user)
+        address = Spree::Address.find_or_create_by(address_attributes)
+        return unless address.valid?
 
-        process_address && persist_address
-
-        address.try(:valid?) || return
-
-        user.addresses << address if user.present?
+        user = context.fetch(:user)
+        user.addresses << address
+        user.bill_address ||= address
+        user.ship_address ||= address
+        user.save!
       end
 
       private
 
-      def prepare_address
-        Spree::Address.find_or_initialize_by(
+      def country
+        @country ||= Spree::Country.find_by(iso: @data['Country Code']) if @data['Country Code']
+      end
+
+      def state
+        @state ||= country&.states&.find_by(abbr: @data['Province Code']) if @data['Province Code']
+      end
+
+      def address_attributes
+        @address_attributes ||= {
           firstname: @data['First Name'],
           lastname: @data['Last Name'],
           address1: @data['Address1'],
@@ -30,9 +35,9 @@ module SolidusImporter
           city: @data['City'],
           zipcode: @data['Zip'],
           phone: @data['Phone'],
-          country: extract_country(@data['Country Code']),
-          state: extract_state(@data['Province Code'])
-        )
+          country: country,
+          state: state,
+        }
       end
     end
   end
