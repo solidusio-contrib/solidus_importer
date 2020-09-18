@@ -25,8 +25,37 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
     end
     let(:address) { Spree::Address.last }
 
+    context 'when there is a state with the same code attached to another country' do
+      let!(:wrong_state) { create(:state, state_code: 'WA', country_iso: 'IT') }
+      let!(:state) { create(:state, state_code: 'XX', country_iso: 'US') }
+
+      it 'tries to fetch it from the current country' do
+        expect { described_method }.to change(Spree::Address, :count).by(1)
+        expect(Spree::Address.last.state).to be_nil
+      end
+
+      context 'when the country requires a states' do
+        before { country.update states_required: true }
+
+        it 'fails creating the address' do
+          expect { described_method }.not_to change(Spree::Address, :count)
+        end
+      end
+    end
+
     it 'create an address' do
       expect { described_method }.to change(Spree::Address, :count).by(1)
+
+      aggregate_failures do
+        expect(address.full_name).to eq("John Doe")
+        expect(address.address1).to eq('My Cool Address, n.1')
+        expect(address.address2).to eq('')
+        expect(address.city).to eq('My beautiful City')
+        expect(address.zipcode).to eq('12345')
+        expect(address.phone).to eq('(555)-123123123')
+        expect(address.country).to eq(country)
+        expect(address.state).to eq(state)
+      end
     end
 
     it 'adds the address in the user addressbook and set it as ship/bill address' do
