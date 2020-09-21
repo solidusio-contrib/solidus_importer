@@ -7,17 +7,8 @@ RSpec.describe SolidusImporter::BaseImporter do
 
   let(:options) { {} }
 
-  describe '#after_import without order' do
-    subject(:described_method) { described_instance.after_import(context) }
-
-    let(:context) { {} }
-    let(:post_processor) { spy }
-
-    it 'execute post_processors' do
-      expect(described_instance).to receive(:post_processors).and_return([post_processor])
-      described_method
-      expect(post_processor).to have_received(:call).with(context)
-    end
+  describe '#after_import' do
+    it { is_expected.to respond_to(:after_import) }
   end
 
   describe '#before_import' do

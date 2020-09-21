@@ -12,13 +12,10 @@ module SolidusImporter
         ]
       },
       orders: {
-        importer: SolidusImporter::BaseImporter,
+        importer: SolidusImporter::OrderImporter,
         processors: [
           SolidusImporter::Processors::Order,
           SolidusImporter::Processors::Log
-        ],
-        post_processors: [
-          SolidusImporter::PostProcessors::OrdersRecalculator
         ]
       },
       products: {

@@ -20,7 +20,7 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
   let(:processor_check_domain) do
     ->(context) {
       user = context[:user].reload
-      (context[:importer].checks ||= []) << user.email.end_with?('@example.com')
+      context[:valid] = user.email.end_with?('@acme.com')
     }
   end
   let(:import_source) { create(:solidus_importer_import_customers) }
@@ -35,8 +35,9 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
     Class.new(SolidusImporter::BaseImporter) do
       attr_accessor :checks
 
-      def after_import(ending_context)
-        ending_context[:importer].checks
+      def handle_row_import(ending_context)
+        self.checks ||= []
+        checks << ending_context[:valid]
       end
     end
   end
@@ -49,6 +50,7 @@ RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeCla
 
   it 'creates 2 users and check the result' do
     expect { process_import }.to change(Spree::User, :count).from(0).to(2)
-    expect(importer).to have_received(:after_import)
+    expect(importer).to have_received(:after_import).once
+    expect(importer.checks).to eq [true, nil, nil, true]
   end
 end
