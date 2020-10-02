@@ -158,5 +158,12 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(imported_order.bill_address.state).to eq state
       expect(imported_order.bill_address.country).to eq state.country
     end
+
+    it 'imports order with ship address' do
+      import
+      expect(imported_order.ship_address).not_to be_blank
+      expect(imported_order.ship_address.state).to eq state
+      expect(imported_order.ship_address.country).to eq state.country
+    end
   end
 end

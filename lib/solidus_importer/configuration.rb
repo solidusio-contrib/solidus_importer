@@ -16,6 +16,7 @@ module SolidusImporter
         processors: [
           SolidusImporter::Processors::Order,
           SolidusImporter::Processors::BillAddress,
+          SolidusImporter::Processors::ShipAddress,
           SolidusImporter::Processors::Log
         ]
       },
