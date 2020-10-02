@@ -28,19 +28,19 @@ RSpec.describe SolidusImporter::OrderImporter do
 
       before do
         described_instance.orders = orders
-        allow(Spree::Core::Importer::Order).to receive(:import)
+        allow(SolidusImporter::SpreeCoreImporterOrder).to receive(:import)
       end
 
       it 'calls Solidus order importer with those params' do
         expect(ending_context).to be_an_instance_of(Hash)
-        expect(Spree::Core::Importer::Order).to have_received(:import)
+        expect(SolidusImporter::SpreeCoreImporterOrder).to have_received(:import)
           .with(nil, hash_including(email: 'email@example.com'))
           .exactly(orders.size).times
       end
 
       context 'when something went wrong during import' do
         before do
-          allow(Spree::Core::Importer::Order).to receive(:import).and_raise(StandardError)
+          allow(SolidusImporter::SpreeCoreImporterOrder).to receive(:import).and_raise(StandardError)
         end
 
         it 'finish #after_import regardless of the error' do

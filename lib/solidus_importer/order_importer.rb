@@ -28,7 +28,7 @@ module SolidusImporter
     def after_import(context)
       orders.each do |_, params|
         user = params.delete(:user)
-        Spree::Core::Importer::Order.import(user, params)
+        SolidusImporter::SpreeCoreImporterOrder.import(user, params)
       rescue StandardError
         context[:success] = false
       end
