@@ -36,7 +36,8 @@ module SolidusImporter
         end
 
         # Really ensure that the order totals & states are correct
-        order.updater.update
+        updater = SolidusImporter::OrderUpdater.new(order)
+        updater.update
         if shipments_attrs.present?
           order.shipments.each_with_index do |shipment, index|
             shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?

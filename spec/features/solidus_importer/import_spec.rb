@@ -136,6 +136,7 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:product) { create(:product) }
     let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
     let(:imported_order) { Spree::Order.first }
+    let(:tax_category) { product.tax_category }
 
     before do
       create(:store)
@@ -182,6 +183,20 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(imported_order.payment_state).to eq 'paid'
       expect(imported_order.payments.first.state).to eq 'completed'
       expect(imported_order.payment_total).to eq imported_order.payments.first.amount
+    end
+
+    context 'when there is a promotion applicable to the order' do
+      let(:zone) { create(:zone, countries: [country]) }
+      let(:country) { state.country }
+
+      before do
+        create(:tax_rate, tax_categories: [tax_category], zone: zone)
+      end
+
+      it 'has no taxes by default' do
+        import
+        expect(imported_order.tax_total).to eq 0
+      end
     end
   end
 end
