@@ -23,33 +23,12 @@ RSpec.describe SolidusImporter::Processors::Order do
         { data: data }
       end
       let(:data) { build(:solidus_importer_row_order, :with_import).data }
-      let(:result) { context.merge(order: Spree::Order.last) }
 
       before { allow(Spree::Store).to receive(:default).and_return(build_stubbed(:store)) }
 
       it 'creates a new order' do
-        expect { described_method }.to change { Spree::Order.count }.by(1)
-        expect(described_method).to eq(result)
-      end
-
-      context 'with an existing valid order' do
-        let!(:order) { create(:order, number: data['Name'], email: data['Email']) }
-
-        it 'updates the order' do
-          expect { described_method }.not_to(change{ Spree::Order.count })
-          expect(described_method).to eq(result)
-          expect(order.reload.email).to eq('an_email@example.com')
-        end
-      end
-
-      context 'with an existing invalid order' do
-        let!(:order) { create(:order, number: data['Name'], email: data['Email']) }
-
-        before { order.update_column(:state, 'an invalid state') }
-
-        it 'raises an exception' do
-          expect { described_method }.to raise_error(ActiveRecord::RecordInvalid, /State is invalid/)
-        end
+        described_method
+        expect(context[:order]).to match(hash_including(number: 'R123456789'))
       end
     end
   end
