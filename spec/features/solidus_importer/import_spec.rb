@@ -133,10 +133,19 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:import_type) { :orders }
     let(:csv_file_rows) { 4 }
     let(:order_numbers) { ['#MA-1097', '#MA-1098'] }
-    let!(:store) { create(:store) }
+    let(:product) { create(:product) }
+
+    before do
+      create(:state, abbr: 'ON', country_iso: 'CA')
+      create(:store)
+      create(:shipping_method, name: 'Acme Shipping')
+      create(:variant, sku: 'a-123', product: product)
+      create(:variant, sku: 'a-456', product: product)
+      create(:variant, sku: 'b-001', product: product)
+    end
 
     it 'imports some orders' do
-      expect { import }.to change(Spree::Order, :count).by(2)
+      expect { import }.to change(Spree::Order, :count).from(0).to(2)
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
