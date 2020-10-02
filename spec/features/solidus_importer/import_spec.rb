@@ -134,9 +134,10 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:csv_file_rows) { 4 }
     let(:order_numbers) { ['#MA-1097', '#MA-1098'] }
     let(:product) { create(:product) }
+    let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
+    let(:imported_order) { Spree::Order.first }
 
     before do
-      create(:state, abbr: 'ON', country_iso: 'CA')
       create(:store)
       create(:shipping_method, name: 'Acme Shipping')
       create(:variant, sku: 'a-123', product: product)
@@ -149,6 +150,13 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+    end
+
+    it 'imports an order with bill address' do
+      import
+      expect(imported_order.bill_address).not_to be_blank
+      expect(imported_order.bill_address.state).to eq state
+      expect(imported_order.bill_address.country).to eq state.country
     end
   end
 end
