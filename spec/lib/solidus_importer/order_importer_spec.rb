@@ -8,7 +8,9 @@ RSpec.describe SolidusImporter::OrderImporter do
   let(:options) { {} }
 
   describe '#after_import' do
-    subject(:ending_context) { described_instance.after_import }
+    subject(:ending_context) { described_instance.after_import(context) }
+
+    let(:context) { { success: true } }
 
     context 'when there are orders attributes' do
       let(:orders) do
@@ -34,6 +36,17 @@ RSpec.describe SolidusImporter::OrderImporter do
         expect(Spree::Core::Importer::Order).to have_received(:import)
           .with(nil, hash_including(email: 'email@example.com'))
           .exactly(orders.size).times
+      end
+
+      context 'when something went wrong during import' do
+        before do
+          allow(Spree::Core::Importer::Order).to receive(:import).and_raise(StandardError)
+        end
+
+        it 'finish #after_import regardless of the error' do
+          expect { subject }.not_to raise_error
+          expect(ending_context).to match(hash_including(success: false))
+        end
       end
     end
   end

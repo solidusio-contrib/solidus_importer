@@ -21,11 +21,15 @@ module SolidusImporter
       orders[number].merge!(order_params)
     end
 
-    def after_import
+    def after_import(context)
       orders.each do |_, params|
         user = params.delete(:user)
         Spree::Core::Importer::Order.import(user, params)
+      rescue StandardError
+        context[:success] = false
       end
+
+      context
     end
   end
 end
