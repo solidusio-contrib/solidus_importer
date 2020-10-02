@@ -152,6 +152,11 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
     end
 
+    it 'imports order with line items' do
+      import
+      expect(imported_order.line_items).not_to be_blank
+    end
+
     it 'imports an order with bill address' do
       import
       expect(imported_order.bill_address).not_to be_blank
