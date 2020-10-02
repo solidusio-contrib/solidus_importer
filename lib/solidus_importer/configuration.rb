@@ -19,6 +19,7 @@ module SolidusImporter
           SolidusImporter::Processors::ShipAddress,
           SolidusImporter::Processors::LineItem,
           SolidusImporter::Processors::Shipment,
+          SolidusImporter::Processors::Payment,
           SolidusImporter::Processors::Log
         ]
       },

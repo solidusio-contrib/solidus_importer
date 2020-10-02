@@ -175,5 +175,13 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
       import
       expect(imported_order.shipments).not_to be_blank
     end
+
+    it 'imports the order with payments' do
+      import
+      expect(imported_order.payments).not_to be_empty
+      expect(imported_order.payment_state).to eq 'paid'
+      expect(imported_order.payments.first.state).to eq 'completed'
+      expect(imported_order.payment_total).to eq imported_order.payments.first.amount
+    end
   end
 end

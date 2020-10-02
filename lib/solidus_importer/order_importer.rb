@@ -16,8 +16,12 @@ module SolidusImporter
 
       return unless number
 
-      order_params = context[:order].to_h.reject { |_k, v| v.blank? }
       orders[number] ||= {}
+
+      order_params = context[:order].to_h.reject { |_k, v| v.blank? }
+      payments_attributes = order_params[:payments_attributes]
+      orders[number][:payments_attributes] ||= []
+      orders[number][:payments_attributes] << payments_attributes if payments_attributes.present?
       orders[number].merge!(order_params)
     end
 
