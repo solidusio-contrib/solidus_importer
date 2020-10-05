@@ -94,7 +94,7 @@ SolidusImporter::Config.solidus_importer[:customers][:processors].map! do |proce
   if processor == 'SolidusImporter::Processors::Log'
     'CustomLoggerProcessor'
   else
-    processors
+    processor
   end
 end
 ```
