@@ -133,13 +133,70 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:import_type) { :orders }
     let(:csv_file_rows) { 4 }
     let(:order_numbers) { ['#MA-1097', '#MA-1098'] }
-    let!(:store) { create(:store) }
+    let(:product) { create(:product) }
+    let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
+    let(:imported_order) { Spree::Order.first }
+    let(:tax_category) { product.tax_category }
+
+    before do
+      create(:store)
+      create(:shipping_method, name: 'Acme Shipping')
+      create(:variant, sku: 'a-123', product: product)
+      create(:variant, sku: 'a-456', product: product)
+      create(:variant, sku: 'b-001', product: product)
+    end
 
     it 'imports some orders' do
-      expect { import }.to change(Spree::Order, :count).by(2)
+      expect { import }.to change(Spree::Order, :count).from(0).to(2)
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
+    end
+
+    it 'imports order with line items' do
+      import
+      expect(imported_order.line_items).not_to be_blank
+    end
+
+    it 'imports an order with bill address' do
+      import
+      expect(imported_order.bill_address).not_to be_blank
+      expect(imported_order.bill_address.state).to eq state
+      expect(imported_order.bill_address.country).to eq state.country
+    end
+
+    it 'imports order with ship address' do
+      import
+      expect(imported_order.ship_address).not_to be_blank
+      expect(imported_order.ship_address.state).to eq state
+      expect(imported_order.ship_address.country).to eq state.country
+    end
+
+    it 'imports order with shipments' do
+      import
+      expect(imported_order.shipments).not_to be_blank
+    end
+
+    it 'imports the order with payments' do
+      import
+      expect(imported_order.payments).not_to be_empty
+      expect(imported_order.payment_state).to eq 'paid'
+      expect(imported_order.payments.first.state).to eq 'completed'
+      expect(imported_order.payment_total).to eq imported_order.payments.first.amount
+    end
+
+    context 'when there is a promotion applicable to the order' do
+      let(:zone) { create(:zone, countries: [country]) }
+      let(:country) { state.country }
+
+      before do
+        create(:tax_rate, tax_categories: [tax_category], zone: zone)
+      end
+
+      it 'has no taxes by default' do
+        import
+        expect(imported_order.tax_total).to eq 0
+      end
     end
   end
 end

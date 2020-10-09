@@ -4,19 +4,36 @@ require 'set'
 
 module SolidusImporter
   class OrderImporter < BaseImporter
-    attr_accessor :order_ids
+    attr_accessor :orders
 
     def initialize(options)
       super
-      self.order_ids = Set.new
+      self.orders = {}
     end
 
     def handle_row_import(context)
-      order_ids << context[:order]&.id
+      number = context.dig(:order, :number)
+
+      return unless number
+
+      orders[number] ||= {}
+
+      order_params = context[:order].to_h.reject { |_k, v| v.blank? }
+      payments_attributes = order_params[:payments_attributes]
+      orders[number][:payments_attributes] ||= []
+      orders[number][:payments_attributes] << payments_attributes if payments_attributes.present?
+      orders[number].merge!(order_params)
     end
 
-    def after_import
-      Spree::Order.where(id: order_ids).find_each(&:recalculate)
+    def after_import(context)
+      orders.each do |_, params|
+        user = params.delete(:user)
+        SolidusImporter::SpreeCoreImporterOrder.import(user, params)
+      rescue StandardError
+        context[:success] = false
+      end
+
+      context
     end
   end
 end
