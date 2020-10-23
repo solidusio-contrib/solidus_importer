@@ -50,21 +50,18 @@ module SolidusImporter
       end
 
       def shipping_method_name
-        @data['Shipping Line Title'] || super
+        @data['Shipping Line Title'] || 'SolidusImporter ShippingMethod'
       end
 
       def shipping_method
-        Spree::ShippingMethod.find_or_create_by(
-          name: shipping_method_name,
-          calculator: calculator,
-        ).tap do |sm|
-          sm.shipping_categories << shipping_category
-          sm.save!
-        end
+        Spree::ShippingMethod.find_by(name: shipping_method_name) || create_shipping_method
       end
 
-      def shipping_method_name
-        'SolidusImporter ShippingMethod'
+      def create_shipping_method
+        shipping_method = Spree::ShippingMethod.new(name: shipping_method_name, calculator: calculator)
+        shipping_method.shipping_categories << shipping_category
+        shipping_method.save!
+        shipping_method
       end
 
       def calculator
