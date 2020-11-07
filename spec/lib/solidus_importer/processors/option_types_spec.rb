@@ -8,8 +8,8 @@ RSpec.describe SolidusImporter::Processors::OptionTypes do
 
     let(:context) { { data: data, product: product } }
     let(:product) { create :base_product }
-    let(:color) { create :option_type, presentation: 'The color', name: 'Color' }
-    let(:size) { create :option_type, presentation: 'The size', name: 'Size' }
+    let(:color) { create :option_type, presentation: 'The color', name: 'color' }
+    let(:size) { create :option_type, presentation: 'The size', name: 'size' }
     let(:data) do
       {
         'Option1 Name' => 'Size',
