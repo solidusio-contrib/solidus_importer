@@ -18,6 +18,17 @@ RSpec.describe SolidusImporter::Processors::OptionTypes do
     end
 
     context 'when "Option(1,2,3) Name" are present' do
+      context 'when product does not have option types' do
+        before do
+          color
+          size
+        end
+
+        xit 'does not create option type records' do
+          expect { described_method }.not_to change(Spree::OptionType, :count)
+        end
+      end
+
       context 'when product already has option types' do
         before { product.option_types << color << size }
 
