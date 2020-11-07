@@ -24,8 +24,12 @@ RSpec.describe SolidusImporter::Processors::OptionTypes do
           size
         end
 
-        xit 'does not create option type records' do
+        it 'does not create option type records' do
           expect { described_method }.not_to change(Spree::OptionType, :count)
+        end
+
+        it 'does not overwrite the option_type presentation' do
+          expect { described_method }.not_to change { size.reload.presentation }
         end
       end
 
