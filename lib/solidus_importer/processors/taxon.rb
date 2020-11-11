@@ -24,13 +24,17 @@ module SolidusImporter
       end
 
       def process_taxons_type
-        product.taxons << prepare_taxon(type, options[:type_taxonomy])
+        add_taxon(prepare_taxon(type, options[:type_taxonomy]))
       end
 
       def process_taxons_tags
         tags.map do |tag|
-          product.taxons << prepare_taxon(tag, options[:tags_taxonomy])
+          add_taxon(prepare_taxon(tag, options[:tags_taxonomy]))
         end
+      end
+
+      def add_taxon(taxon)
+        product.taxons << taxon unless product.taxons.include?(taxon)
       end
 
       def prepare_taxon(name, taxonomy)

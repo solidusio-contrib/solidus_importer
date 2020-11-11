@@ -29,5 +29,18 @@ RSpec.describe SolidusImporter::Processors::Taxon do
       expect(type_taxonomy).to be_present
       expect(tags_taxonomy).to be_present
     end
+
+    context 'taxon already exists on product' do
+      let(:tags_taxonomy) { create(:taxonomy, name: 'Tags') }
+      let!(:taxon) { create(:taxon, name: 'Tag1', taxonomy: tags_taxonomy) }
+
+      before do
+        product.taxons << taxon
+      end
+
+      it 'does not raise a Validation error' do
+        expect { described_method }.not_to raise_error
+      end
+    end
   end
 end
