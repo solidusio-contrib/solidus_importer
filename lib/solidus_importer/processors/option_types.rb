@@ -15,13 +15,11 @@ module SolidusImporter
 
       def process_option_types(product)
         option_type_names.each_with_index.map do |name, i|
-          option_type = product.option_types.find_or_initialize_by(
-            name: name
-          )
-          option_type.presentation = name
-          option_type.name = name.downcase
+          option_type = Spree::OptionType.find_or_initialize_by(name: name.downcase)
+          option_type.presentation ||= name
           option_type.position = i + 1
           option_type.save
+          product.option_types << option_type unless product.option_types.include?(option_type)
         end
       end
 

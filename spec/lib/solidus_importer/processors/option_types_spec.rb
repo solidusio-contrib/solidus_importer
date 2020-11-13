@@ -8,8 +8,8 @@ RSpec.describe SolidusImporter::Processors::OptionTypes do
 
     let(:context) { { data: data, product: product } }
     let(:product) { create :base_product }
-    let(:color) { create :option_type, presentation: 'The color', name: 'Color' }
-    let(:size) { create :option_type, presentation: 'The size', name: 'Size' }
+    let(:color) { create :option_type, presentation: 'The color', name: 'color' }
+    let(:size) { create :option_type, presentation: 'The size', name: 'size' }
     let(:data) do
       {
         'Option1 Name' => 'Size',
@@ -18,6 +18,21 @@ RSpec.describe SolidusImporter::Processors::OptionTypes do
     end
 
     context 'when "Option(1,2,3) Name" are present' do
+      context 'when product does not have option types' do
+        before do
+          color
+          size
+        end
+
+        it 'does not create option type records' do
+          expect { described_method }.not_to change(Spree::OptionType, :count)
+        end
+
+        it 'does not overwrite the option_type presentation' do
+          expect { described_method }.not_to change { size.reload.presentation }
+        end
+      end
+
       context 'when product already has option types' do
         before { product.option_types << color << size }
 
