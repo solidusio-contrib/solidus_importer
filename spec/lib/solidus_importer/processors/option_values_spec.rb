@@ -39,5 +39,18 @@ RSpec.describe SolidusImporter::Processors::OptionValues do
         expect(l.option_type).to eq size
       end
     end
+
+    context 'when an Option has an empty value' do
+      let(:data) do
+        {
+          'Option1 Name' => 'Size',
+          'Option1 Value' => ''
+        }
+      end
+
+      it 'does not create option values for variant in row' do
+        expect { described_method }.not_to change(variant.option_values, :count)
+      end
+    end
   end
 end

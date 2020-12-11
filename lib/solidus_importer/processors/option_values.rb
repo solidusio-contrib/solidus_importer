@@ -17,6 +17,8 @@ module SolidusImporter
 
       def process_option_values
         option_value_names.each_with_index do |name, i|
+          next if name.empty?
+
           option_value = Spree::OptionValue.find_or_initialize_by(
             option_type: option_type(i),
             name: name
