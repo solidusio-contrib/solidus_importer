@@ -21,10 +21,12 @@ module SolidusImporter
 
           option_value = Spree::OptionValue.find_or_initialize_by(
             option_type: option_type(i),
-            name: name
+            name: name.parameterize
           )
           option_value.presentation = name
+          option_value.save!
           variant.option_values << option_value
+          variant.save!
         end
       end
 

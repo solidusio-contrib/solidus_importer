@@ -9,3 +9,5 @@ Spree::Backend::Config.configure do |config|
     url: :admin_solidus_importer_imports_path
   )
 end
+
+MIME::Types.add(MIME::Type.new(["application/csv", "csv"]), true)

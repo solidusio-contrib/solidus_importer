@@ -26,9 +26,9 @@ RSpec.describe SolidusImporter::Processors::OptionValues do
       it 'create option values for variant in row' do
         expect { described_method }.to change(variant.option_values, :count).from(0).to(2)
         expect(variant.option_values.first.presentation).to eq 'L'
-        expect(variant.option_values.first.name).to eq 'L'
+        expect(variant.option_values.first.name).to eq 'l'
         expect(variant.option_values.last.presentation).to eq 'Black'
-        expect(variant.option_values.last.name).to eq 'Black'
+        expect(variant.option_values.last.name).to eq 'black'
       end
 
       it 'creates "Black" option value for related "Color" option type' do
