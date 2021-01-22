@@ -14,8 +14,7 @@ gem 'solidus_importer'
 Bundle your dependencies and run the installation generator:
 
 ```shell
-bundle
-bundle exec rails g solidus_importer:install
+bin/rails generate solidus_importer:install
 ```
 
 ## Usage
@@ -165,13 +164,20 @@ $ bin/rails server
 Use Ctrl-C to stop
 ```
 
-### Releasing new versions
+### Updating the changelog
 
-Your new extension version can be released using `gem-release` like this:
+Before and after releases the changelog should be updated to reflect the up-to-date status of
+the project:
 
 ```shell
-bundle exec gem bump -v VERSION --tag --push --remote upstream && gem release
+bin/rake changelog
+git add CHANGELOG.md
+git commit -m "Update the changelog"
 ```
+
+### Releasing new versions
+
+Please refer to the dedicated [page](https://github.com/solidusio/solidus/wiki/How-to-release-extensions) on Solidus wiki.
 
 ## License
 
