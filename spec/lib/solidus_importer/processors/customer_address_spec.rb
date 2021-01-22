@@ -26,8 +26,10 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
     let(:address) { Spree::Address.last }
 
     context 'when there is a state with the same code attached to another country' do
-      let!(:wrong_state) { create(:state, state_code: 'WA', country_iso: 'IT') }
-      let!(:state) { create(:state, state_code: 'XX', country_iso: 'US') }
+      let(:wrong_state) { create(:state, state_code: 'WA', country_iso: 'IT') }
+      let(:state) { create(:state, state_code: 'XX', country_iso: 'US') }
+
+      before { state and wrong_state }
 
       it 'tries to fetch it from the current country' do
         expect { described_method }.to change(Spree::Address, :count).by(1)

@@ -23,7 +23,7 @@ RSpec.describe 'Imports', type: :feature do
   describe 'Import create' do
     subject(:described_path) { spree.new_admin_solidus_importer_import_path }
 
-    let!(:shipping_method) { create :shipping_method }
+    let(:shipping_method) { create :shipping_method }
 
     let(:import_file) { page.find 'input[name="solidus_importer_import[file]"]' }
     let(:import_button) { page.find '[type="submit"]' }
@@ -31,6 +31,7 @@ RSpec.describe 'Imports', type: :feature do
     let(:import_type) { "products" }
 
     before do
+      shipping_method
       allow(::SolidusImporter::ImportJob).to receive(:perform_later)
 
       visit described_path

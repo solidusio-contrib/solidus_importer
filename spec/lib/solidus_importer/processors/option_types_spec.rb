@@ -29,7 +29,7 @@ RSpec.describe SolidusImporter::Processors::OptionTypes do
         end
 
         it 'does not overwrite the option_type presentation' do
-          expect { described_method }.not_to change { size.reload.presentation }
+          expect { described_method }.not_to(change { size.reload.presentation })
         end
       end
 
