@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SolidusImporter
-  class ImportJob < ActiveJob::Base
+  class ImportJob < ApplicationJob
     queue_as :default
 
     retry_on ActiveRecord::Deadlocked

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidusImporter
   class SpreeCoreImporterOrder < Spree::Core::Importer::Order
     def self.import(user, params)
@@ -27,7 +29,7 @@ module SolidusImporter
 
         order.update!(params)
 
-        order.create_proposed_shipments unless shipments_attrs.present?
+        order.create_proposed_shipments if shipments_attrs.blank?
 
         if completed_at
           order.completed_at = completed_at

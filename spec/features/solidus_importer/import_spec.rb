@@ -2,8 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
-  subject(:import) { SolidusImporter::ProcessImport.import_from_file(import_file, import_type) }
+RSpec.describe 'Import from CSV files' do
+  subject(:import) {
+    SolidusImporter::ProcessImport.import_from_file(import_file, import_type)
+  }
 
   let(:import_file) {}
   let(:import_type) {}
@@ -36,7 +38,9 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:import_type) { :products }
     let(:csv_file_rows) { 7 }
     let(:product_slug) { 'hightop-sports-sneaker' }
-    let(:image_url) { 'https://cdn.shopify.com/shopify-marketing_assets/static/tobias-lutke-shopify.jpg' }
+    let(:image_url) {
+      'https://cdn.shopify.com/shopify-marketing_assets/static/tobias-lutke-shopify.jpg'
+    }
     let!(:shipping_category) { create(:shipping_category) }
 
     before do
@@ -111,7 +115,9 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'with the export from Shopify Product CSVs - Home and Garden' do
-      let(:import_file) { solidus_importer_fixture_path('home-and-garden.csv') }
+      let(:import_file) {
+        solidus_importer_fixture_path('home-and-garden.csv')
+      }
       let(:import_type) { :products }
       let!(:shipping_category) { create(:shipping_category) }
 

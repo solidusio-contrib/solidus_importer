@@ -16,7 +16,7 @@ RSpec.describe SolidusImporter::BaseImporter do
       let(:context) { { success: true } }
 
       it 'returns a successful context' do
-        is_expected.to match(hash_including(success: true))
+        expect(subject).to match(hash_including(success: true))
       end
     end
   end
