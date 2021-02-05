@@ -49,7 +49,11 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
       expect { described_method }.to change(Spree::Address, :count).by(1)
 
       aggregate_failures do
-        expect(address.full_name).to eq("John Doe")
+        if SolidusSupport.combined_first_and_last_name_in_address?
+          expect(address.name).to eq("John Doe")
+        else
+          expect(address.full_name).to eq("John Doe")
+        end
         expect(address.address1).to eq('My Cool Address, n.1')
         expect(address.address2).to eq('')
         expect(address.city).to eq('My beautiful City')
