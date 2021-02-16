@@ -17,6 +17,7 @@ module SolidusImporter
         processor.call(context)
       rescue StandardError => e
         context.merge!(success: false, messages: e.message) # rubocop:disable Performance/RedundantMerge
+        SolidusImporter::Config.row_exception_handler.call(e, context)
         break
       end
 

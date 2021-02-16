@@ -40,6 +40,17 @@ module SolidusImporter
     def available_types
       solidus_importer.keys
     end
+
+    # Solidus's preferences assume that if the default value is a Proc/lambda
+    # that it should be called to return the actual default value. In order to
+    # set a default value that is itself a Proc, you must wrap it in another
+    # Proc. This only applies to the default value and this preference can be
+    # set normally, by assigning the Proc directly.
+    #
+    # Additionally, some versions of Solidus will pass in the version as an
+    # argument. Using a lambda will verify that the correct number of arguments
+    # are passed, whereas using a plain Proc won't.
+    preference :row_exception_handler, :callable, default: proc { ->(exception, context) {} }
   end
 
   class << self
