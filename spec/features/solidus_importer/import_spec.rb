@@ -2,8 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
-  subject(:import) { SolidusImporter::ProcessImport.import_from_file(import_file, import_type) }
+RSpec.describe 'Import from CSV files' do
+  subject(:import) {
+    SolidusImporter::ProcessImport.import_from_file(import_file, import_type)
+  }
 
   let(:import_file) {}
   let(:import_type) {}
@@ -16,7 +18,9 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:csv_file_rows) { 4 }
     let(:user_emails) { ['jane.doe@acme.com', 'john.doe@acme.com'] }
     let(:imported_customer) { Spree::User.last }
-    let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
+    let(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
+
+    before { state }
 
     it 'imports some customers' do
       expect { import }.to change(Spree::User, :count).by(2)
@@ -36,17 +40,15 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     let(:import_type) { :products }
     let(:csv_file_rows) { 7 }
     let(:product_slug) { 'hightop-sports-sneaker' }
-    let(:image_url) { 'https://cdn.shopify.com/shopify-marketing_assets/static/tobias-lutke-shopify.jpg' }
-    let!(:shipping_category) { create(:shipping_category) }
+    let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+    let(:shipping_category) { create(:shipping_category) }
 
     before do
-      allow(URI).to receive(:open).and_call_original
-      allow(URI).to receive(:open).with(image_url) do
-        File.open(solidus_importer_fixture_path('thinking-cat.jpg'))
-      end
+      shipping_category
+      allow(URI).to receive(:parse).and_return(uri)
     end
 
-    it 'imports some products' do # rubocop:disable RSpec/MultipleExpectations
+    it 'imports some products' do
       expect { import }.to change(Spree::Product, :count).by(1)
       product = Spree::Product.last
       expect(product.variants.count).to eq(3)
@@ -65,7 +67,9 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
   context 'with an invalid products file' do
     let(:import_file) { solidus_importer_fixture_path('invalid_product.csv') }
     let(:import_type) { :products }
-    let!(:shipping_category) { create(:shipping_category) }
+    let(:shipping_category) { create(:shipping_category) }
+
+    before { shipping_category }
 
     it 'fails to import the product' do
       expect { import }.not_to change(Spree::Product, :count)
@@ -74,14 +78,18 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
   end
 
   context 'with Shopify Product CSVs' do
+    let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+
     before do
-      allow(URI).to receive(:open)
+      allow(URI).to receive(:parse).and_return(uri)
     end
 
     context 'with the export from Shopify Product CSVs - Apparel' do
       let(:import_file) { solidus_importer_fixture_path('apparel.csv') }
       let(:import_type) { :products }
-      let!(:shipping_category) { create(:shipping_category) }
+      let(:shipping_category) { create(:shipping_category) }
+
+      before { shipping_category }
 
       it 'imports a some products and a blue shirt with no variants' do
         expect { import }.to change(Spree::Product, :count).from(0)
@@ -96,7 +104,9 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     context 'with the export from Shopify Product CSVs - Jewelry' do
       let(:import_file) { solidus_importer_fixture_path('jewelery.csv') }
       let(:import_type) { :products }
-      let!(:shipping_category) { create(:shipping_category) }
+      let(:shipping_category) { create(:shipping_category) }
+
+      before { shipping_category }
 
       it 'imports a some products and a clay pot with two variants' do
         expect { import }.to change(Spree::Product, :count).from(0)
@@ -111,9 +121,13 @@ RSpec.describe 'Import from CSV files' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'with the export from Shopify Product CSVs - Home and Garden' do
-      let(:import_file) { solidus_importer_fixture_path('home-and-garden.csv') }
+      let(:import_file) {
+        solidus_importer_fixture_path('home-and-garden.csv')
+      }
       let(:import_type) { :products }
-      let!(:shipping_category) { create(:shipping_category) }
+      let(:shipping_category) { create(:shipping_category) }
+
+      before { shipping_category }
 
       it 'imports a some products' do
         expect { import }.to change(Spree::Product, :count).from(0)

@@ -26,10 +26,26 @@ module SolidusImporter
         @state ||= country&.states&.find_by(abbr: @data['Province Code']) if @data['Province Code']
       end
 
+      def firstname
+        @data['First Name']
+      end
+
+      def lastname
+        @data['Last Name']
+      end
+
+      def name
+        "#{firstname} #{lastname}".strip
+      end
+
       def address_attributes
-        @address_attributes ||= {
-          firstname: @data['First Name'],
-          lastname: @data['Last Name'],
+        name_attrs = if SolidusImporter.combined_first_and_last_name_in_address?
+                       { name: name }
+                     else
+
+                       { firstname: firstname, lastname: lastname }
+                     end
+        {
           address1: @data['Address1'],
           address2: @data['Address2'],
           city: @data['City'],
@@ -37,7 +53,7 @@ module SolidusImporter
           phone: @data['Phone'],
           country: country,
           state: state,
-        }
+        }.merge(name_attrs)
       end
     end
   end

@@ -24,14 +24,18 @@ RSpec.describe SolidusImporter::Processors::ProductImages do
       end
 
       it 'raises an exception' do
-        expect { described_method }.to raise_error(Errno::ENOENT, /No such file or directory/)
+        expect { described_method }.to raise_error(URI::InvalidURIError, /bad URI/)
       end
     end
 
     context 'with a product and a valid image in row data' do
-      let(:image_path) { solidus_importer_fixture_path('thinking-cat.jpg') }
       let(:context) do
-        { data: { 'Image Src' => image_path }, product: build_stubbed(:product) }
+        { data: { 'Image Src' => 'http://remote-service.net/thinking-cat.jpg' }, product: build_stubbed(:product) }
+      end
+      let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+
+      before do
+        allow(URI).to receive(:parse).and_return(uri)
       end
 
       it 'adds images to the product' do

@@ -24,16 +24,21 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
       end
 
       it 'raises an exception' do
-        expect { described_method }.to raise_error(Errno::ENOENT, /No such file or directory/)
+        expect { described_method }.to raise_error(URI::InvalidURIError, /bad URI/)
       end
     end
 
     context 'with a variant and a valid image in row data' do
       let(:context) do
         {
-          data: { 'Variant Image' => solidus_importer_fixture_path('thinking-cat.jpg') },
+          data: { 'Variant Image' => 'http://remote-service.net/thinking-cat.jpg' },
           variant: build_stubbed(:variant)
         }
+      end
+      let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+
+      before do
+        allow(URI).to receive(:parse).and_return(uri)
       end
 
       it 'adds images to the variant' do

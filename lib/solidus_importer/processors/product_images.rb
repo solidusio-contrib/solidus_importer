@@ -14,7 +14,7 @@ module SolidusImporter
       private
 
       def prepare_image
-        attachment = URI.open(@data['Image Src'])
+        attachment = URI.parse(@data['Image Src']).open
         Spree::Image.new(attachment: attachment, alt: @data['Alt Text'])
       end
 

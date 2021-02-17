@@ -6,12 +6,14 @@ RSpec.describe SolidusImporter::Processors::Taxon do
   describe '#call' do
     subject(:described_method) { described_class.call(context) }
 
-    let!(:shipping_category) { create :shipping_category }
+    let(:shipping_category) { create :shipping_category }
     let(:context) { { data: data, product: product } }
     let(:product) { create :product }
     let(:data) { build(:solidus_importer_row_product, :with_import, :with_type, :with_tags).data }
     let(:tags_taxonomy) { Spree::Taxonomy.find_by(name: 'Tags') }
     let(:type_taxonomy) { Spree::Taxonomy.find_by(name: 'Type') }
+
+    before { shipping_category }
 
     it 'create a taxon for each tag, related to the given taxonomy' do
       expect { described_method }.to change(product.taxons, :count).by(4)
@@ -30,9 +32,9 @@ RSpec.describe SolidusImporter::Processors::Taxon do
       expect(tags_taxonomy).to be_present
     end
 
-    context 'taxon already exists on product' do
+    context 'when taxon already exists on product' do
       let(:tags_taxonomy) { create(:taxonomy, name: 'Tags') }
-      let!(:taxon) { create(:taxon, name: 'Tag1', taxonomy: tags_taxonomy) }
+      let(:taxon) { create(:taxon, name: 'Tag1', taxonomy: tags_taxonomy) }
 
       before do
         product.taxons << taxon

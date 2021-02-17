@@ -27,7 +27,6 @@ module SolidusImporter
 
     ##
     # Defines a method called after the import of each row
-    def handle_row_import(_ending_row_context)
-    end
+    def handle_row_import(_ending_row_context); end
   end
 end

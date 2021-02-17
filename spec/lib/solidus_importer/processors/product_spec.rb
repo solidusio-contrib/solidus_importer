@@ -25,7 +25,9 @@ RSpec.describe SolidusImporter::Processors::Product do
       let(:data) { build(:solidus_importer_row_product, :with_import).data }
       let(:product) { Spree::Product.last }
       let(:result) { context.merge(product: product) }
-      let!(:shipping_category) { create(:shipping_category) }
+      let(:shipping_category) { create(:shipping_category) }
+
+      before { shipping_category }
 
       it 'creates a new product' do
         expect { described_method }.to change { Spree::Product.count }.by(1)

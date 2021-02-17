@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Set up a some processors' do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Set up a some processors' do
   subject(:process_import) do
     SolidusImporter::ProcessImport.new(
       import_source,

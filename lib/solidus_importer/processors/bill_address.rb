@@ -25,10 +25,25 @@ module SolidusImporter
         @data['Billing Province Code']
       end
 
+      def firstname
+        @data['Billing First Name']
+      end
+
+      def lastname
+        @data['Billing Last Name']
+      end
+
+      def name
+        "#{firstname} #{lastname}".strip
+      end
+
       def bill_address_attributes
+        name_attrs = if SolidusImporter.combined_first_and_last_name_in_address?
+                       { name: name }
+                     else
+                       { firstname: firstname, lastname: lastname }
+                     end
         {
-          firstname: @data['Billing First Name'],
-          lastname: @data['Billing Last Name'],
           address1: @data['Billing Address1'],
           address2: @data['Billing Address2'],
           city: @data['Billing City'],
@@ -37,7 +52,7 @@ module SolidusImporter
           phone: @data['Billing Phone'],
           country: country,
           state: state
-        }
+        }.merge(name_attrs)
       end
 
       def country

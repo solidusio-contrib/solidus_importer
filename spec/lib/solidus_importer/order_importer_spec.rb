@@ -44,7 +44,7 @@ RSpec.describe SolidusImporter::OrderImporter do
         end
 
         it 'finish #after_import regardless of the error' do
-          expect { subject }.not_to raise_error
+          expect { ending_context }.not_to raise_error
           expect(ending_context).to match(hash_including(success: false))
         end
       end
