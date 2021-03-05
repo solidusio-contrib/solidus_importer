@@ -14,8 +14,19 @@ module SolidusImporter
       private
 
       def prepare_image
-        attachment = URI.parse(@data['Variant Image']).open
-        Spree::Image.new(attachment: attachment)
+        attachment = @data['Variant Image']
+        image = Spree::Image.new
+
+        if attachment =~ /^http/
+          io = URI.parse(attachment).open
+          io.define_singleton_method(:to_path) do
+            File.basename(URI.parse(attachment).path)
+          end
+        else
+          io = File.open(attachment)
+        end
+
+        image.tap { |i| i.attachment = io }
       end
 
       def process_images(variant)
