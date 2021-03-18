@@ -12,3 +12,29 @@
     </div>
   </div>
 </div>
+<script> 
+  var control = document.getElementById("solidus_importer_import_file");
+  control.addEventListener("change", function(event) {
+  // When the control has changed, there are new files
+  f = solidus_importer_import_file.files[0]
+  //console.log("Filename: " + f.name);
+  //application/vnd.ms-excel
+  console.log("Type: " + f.type);
+  if(f.type=="application/vnd.ms-excel") {
+    alert ('This computer has excel installed. Please try to upload with a non windows computer or at least one without excel');
+  }
+  //console.log("Size: " + f.size + " bytes");
+  var fileReader = new FileReader();
+  fileReader.onloadend = function(e) {
+    var arr = (new Uint8Array(e.target.result)).subarray(0, 4);
+    var header = "";
+    for(var i = 0; i < arr.length; i++) {
+      header += arr[i].toString(16);
+    }
+    console.log(header);
+    // Check the file signature against known types
+  };
+  fileReader.readAsArrayBuffer(f);
+}, false);
+  </script>
+
