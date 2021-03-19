@@ -40,7 +40,8 @@ RSpec.describe 'Import from CSV files' do
     let(:import_type) { :products }
     let(:csv_file_rows) { 7 }
     let(:product_slug) { 'hightop-sports-sneaker' }
-    let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+    let(:image_path) { solidus_importer_fixture_path('thinking-cat.jpg') }
+    let(:uri) { instance_double(URI::HTTP, path: image_path, open: File.open(image_path)) }
     let(:shipping_category) { create(:shipping_category) }
 
     before do
@@ -78,7 +79,8 @@ RSpec.describe 'Import from CSV files' do
   end
 
   context 'with Shopify Product CSVs' do
-    let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+    let(:image_path) { solidus_importer_fixture_path('thinking-cat.jpg') }
+    let(:uri) { instance_double(URI::HTTP, path: image_path, open: File.open(image_path)) }
 
     before do
       allow(URI).to receive(:parse).and_return(uri)
