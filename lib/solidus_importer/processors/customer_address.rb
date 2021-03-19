@@ -10,9 +10,18 @@ module SolidusImporter
         return unless address.valid?
 
         user = context.fetch(:user)
+
         user.addresses << address
-        user.bill_address ||= address
-        user.ship_address ||= address
+
+        if user.respond_to?(:mark_default_ship_address)
+          user.mark_default_ship_address(address)
+          user.mark_default_bill_address(address)
+        else
+          user.mark_default_address(address)
+          user.ship_address_id = address.id
+          user.bill_address_id = address.id
+        end
+
         user.save!
       end
 
