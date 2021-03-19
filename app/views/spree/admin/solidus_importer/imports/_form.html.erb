@@ -18,11 +18,7 @@
   // When the control has changed, there are new files
   f = solidus_importer_import_file.files[0]
   //console.log("Filename: " + f.name);
-  //application/vnd.ms-excel
   console.log("Type: " + f.type);
-  if(f.type=="application/vnd.ms-excel") {
-    alert ('This computer has excel installed. Please try to upload with a non windows computer or at least one without excel');
-  }
   //console.log("Size: " + f.size + " bytes");
   var fileReader = new FileReader();
   fileReader.onloadend = function(e) {
@@ -32,7 +28,8 @@
       header += arr[i].toString(16);
     }
     console.log(header);
-    // Check the file signature against known types
+    // Check the file signature against known types 
+    // See https://github.com/solidusio-contrib/solidus_importer/issues/55
   };
   fileReader.readAsArrayBuffer(f);
 }, false);
