@@ -35,7 +35,13 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
           variant: build_stubbed(:variant)
         }
       end
-      let(:uri) { instance_double(URI::HTTP, open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))) }
+      let(:uri) do
+        instance_double(
+          URI::HTTP,
+          path: 'thinking-cat.jpg',
+          open: File.open(solidus_importer_fixture_path('thinking-cat.jpg'))
+        )
+      end
 
       before do
         allow(URI).to receive(:parse).and_return(uri)
