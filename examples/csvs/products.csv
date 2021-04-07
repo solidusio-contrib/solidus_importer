@@ -1,0 +1,4 @@
+Handle,Title,Published,Variant SKU,Variant Weight,Variant Price,Option1 Value,Option1 Name,Option2 Name,Option3 Name,Option2 Value,Option3 Value,Image Src,Alt Text,Variant Image
+my-sample-product,Sample Product,true,,,,Default Title,,,,,,https://github.com/solidusio/solidus/raw/master/sample/db/samples/images/ruby_hoodie.jpg,Cool Image,
+my-sample-product,,true,my-sample-product-1,10,5,Black,color,weight,size,50,m,,,https://github.com/solidusio/solidus/raw/master/sample/db/samples/images/solidus_tshirt_back_black.png
+my-sample-product,,true,my-sample-product-2,10,5,Blue,color,weight,size,50,m,,,https://github.com/solidusio/solidus/raw/master/sample/db/samples/images/solidus_tshirt_back_blue.png

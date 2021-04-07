@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.2.0](https://github.com/solidusio-contrib/solidus_importer/tree/v0.2.0) (2021-04-02)
+## [v0.2.0](https://github.com/solidusio-contrib/solidus_importer/tree/v0.2.0) (2021-04-07)
 
 [Full Changelog](https://github.com/solidusio-contrib/solidus_importer/compare/v0.2.0...v0.2.0)
 
@@ -12,6 +12,7 @@
 **Merged pull requests:**
 
 - Let the extension work with ActiveStorage [\#57](https://github.com/solidusio-contrib/solidus_importer/pull/57) ([MinasMazar](https://github.com/MinasMazar))
+- Update gemspec with correct Github organization [\#52](https://github.com/solidusio-contrib/solidus_importer/pull/52) ([MinasMazar](https://github.com/MinasMazar))
 - Fix option types and values processors [\#47](https://github.com/solidusio-contrib/solidus_importer/pull/47) ([stefano-sarioli](https://github.com/stefano-sarioli))
 - Update to the latest dev-support template and allow usage of Solidus 3.0 [\#46](https://github.com/solidusio-contrib/solidus_importer/pull/46) ([MinasMazar](https://github.com/MinasMazar))
 - Skip empty option values [\#45](https://github.com/solidusio-contrib/solidus_importer/pull/45) ([derrickp](https://github.com/derrickp))
