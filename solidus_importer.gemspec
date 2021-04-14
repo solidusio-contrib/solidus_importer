@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.license = 'BSD-3-Clause'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/solidusio-contrib/solidus_importer#readme'
+  spec.metadata['source_code_uri'] = 'https://github.com/solidusio-contrib/solidus_importer'
   spec.metadata['changelog_uri'] = 'https://github.com/solidusio-contrib/solidus_importer/releases'
 
   spec.required_ruby_version = Gem::Requirement.new('~> 2.5')
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.executables = files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'solidus_core', ['>= 2.0.0', '< 3']
+  spec.add_dependency 'solidus_core', ['>= 2.0.0', '< 4']
   spec.add_dependency 'solidus_support', '~> 0.5'
 
   spec.add_development_dependency 'solidus_dev_support', '~> 2.4'
