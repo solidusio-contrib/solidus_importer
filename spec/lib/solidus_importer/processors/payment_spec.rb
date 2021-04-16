@@ -17,7 +17,7 @@ RSpec.describe SolidusImporter::Processors::Payment do
       }
     end
     let(:expected_params) do
-      [{ payment_method: payment_method_name, amount: amount }]
+      { payment_method: payment_method_name, amount: amount }
     end
     let(:payment_method_name) { 'SolidusImporter PaymentMethod' }
     let(:amount) { 21.0 }

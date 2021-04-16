@@ -22,13 +22,15 @@ module SolidusImporter
       end
 
       def inventory_units
-        line_items_attributes.map do |_, line_item|
-          { sku: line_item[:sku] }
-        end
+        sku = line_items_attributes[:sku]
+
+        return [] if sku.blank?
+
+        [{ sku: sku }]
       end
 
       def line_items_attributes
-        order.fetch(:line_items_attributes, [])
+        order.fetch(:line_items_attributes, {})
       end
 
       def shipments_attributes
