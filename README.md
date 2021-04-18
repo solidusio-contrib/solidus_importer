@@ -41,7 +41,12 @@ There are three supported CSV types:
 
 1. [Product](https://help.shopify.com/en/manual/migrating-to-shopify/transporter-app/csv-products)
 2. [Order](https://help.shopify.com/en/manual/migrating-to-shopify/transporter-app/csv-orders)
-3. [Customer](https://help.shopify.com/en/manual/migrating-to-shopify/transporter-app/csv-customers)
+3. [Customer](https://help.shopify.com/en/manual/migrating-to-shopifsy/transporter-app/csv-customers)
+
+
+---
+
+Alternatively, we accept CSV files that conform to the ones shown in the [examples/csvs](https://github.com/solidusio-contrib/solidus_importer/tree/master/examples) folder
 
 ### The Processors
 
