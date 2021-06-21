@@ -14,8 +14,7 @@ module SolidusImporter
 
         self.order = context.fetch(:order, {})
 
-        order[:payments_attributes] ||= []
-        order[:payments_attributes] << payment_attributes
+        order[:payments_attributes] = payment_attributes
 
         context.merge!(order: order)
       end

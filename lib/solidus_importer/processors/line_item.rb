@@ -9,12 +9,7 @@ module SolidusImporter
         return if @data['Lineitem sku'].blank?
 
         order = context.fetch(:order, {})
-
-        order[:line_items_attributes] ||= {}
-
-        index = order[:line_items_attributes].size
-
-        order[:line_items_attributes][index] = line_items_attributes
+        order[:line_items_attributes] = line_items_attributes
 
         context.merge!(order: order)
       end
