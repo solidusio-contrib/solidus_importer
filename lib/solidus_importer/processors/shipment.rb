@@ -9,8 +9,7 @@ module SolidusImporter
         @data = context.fetch(:data)
 
         self.order = context.fetch(:order, {})
-        order[:shipments_attributes] ||= []
-        order[:shipments_attributes] << shipments_attributes
+        order[:shipment_attributes] = shipment_attributes
 
         context.merge!(order: order)
       end
@@ -26,14 +25,15 @@ module SolidusImporter
 
         return [] if sku.blank?
 
-        [{ sku: sku }]
+        quantity = line_items_attributes[:quantity].to_i
+        [{ sku: sku }] * quantity
       end
 
       def line_items_attributes
         order.fetch(:line_items_attributes, {})
       end
 
-      def shipments_attributes
+      def shipment_attributes
         {
           shipped_at: shipped_at,
           shipping_method: shipping_method.name,
