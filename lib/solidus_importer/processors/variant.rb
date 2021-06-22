@@ -28,6 +28,9 @@ module SolidusImporter
           variant.weight = @data['Variant Weight'] unless @data['Variant Weight'].nil?
           variant.price = @data['Variant Price'] if @data['Variant Price'].present?
 
+          # ensure the sku is properly set (for master sku)
+          variant.sku = sku
+
           # Save the product
           variant.save!
         end

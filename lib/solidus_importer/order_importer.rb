@@ -22,12 +22,16 @@ module SolidusImporter
 
       payments_attributes = order_params.delete(:payments_attributes)
       line_items_attributes = order_params.delete(:line_items_attributes)
+      shipment_attributes = order_params.delete(:shipment_attributes)
 
       orders[number][:payments_attributes] ||= []
       orders[number][:line_items_attributes] ||= {}
+      orders[number][:shipments_attributes] ||= []
 
       index = orders[number][:line_items_attributes].size
       orders[number][:line_items_attributes][index] = line_items_attributes if line_items_attributes.present?
+
+      merge_shipments(orders[number], shipment_attributes) if shipment_attributes.present?
 
       orders[number][:payments_attributes] << payments_attributes if payments_attributes.present?
       orders[number].merge!(order_params)
@@ -42,6 +46,17 @@ module SolidusImporter
       end
 
       context
+    end
+
+    private
+
+    def merge_shipments(order_attributes, shipment_attributes)
+      shipments_attributes = order_attributes[:shipments_attributes]
+      if shipments_attributes.empty?
+        shipments_attributes << shipment_attributes
+      else
+        shipments_attributes.first[:inventory_units].concat(shipment_attributes[:inventory_units])
+      end
     end
   end
 end
