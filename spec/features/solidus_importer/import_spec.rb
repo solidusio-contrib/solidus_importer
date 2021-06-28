@@ -56,10 +56,12 @@ RSpec.describe 'Import from CSV files' do
       expect(product.slug).to eq(product_slug)
       expect(import.state).to eq('completed')
       expect(product.images).not_to be_empty
+      expect(product.images.pluck(:alt)).to include "hightop front view"
       expect(product.option_types.count).to eq 2
       expect(product.variants.sample.option_values.count).to eq 2
       expect(product.variants.sample.images).not_to be_empty
-      expect(Spree::Product.last.images).not_to be_empty
+      # acts_as_list gem bumps up the positon of all higher position values when a new image is added below
+      expect(product.images.pluck(:position)).to include 4, 5, 1
       expect(Spree::Variant.last.images).not_to be_empty
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
     end
