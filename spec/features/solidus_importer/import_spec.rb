@@ -56,6 +56,7 @@ RSpec.describe 'Import from CSV files' do
       expect(product.slug).to eq(product_slug)
       expect(import.state).to eq('completed')
       expect(product.images).not_to be_empty
+      expect(product.images.pluck(:alt)).to include "hightop front view"
       expect(product.option_types.count).to eq 2
       expect(product.variants.sample.option_values.count).to eq 2
       expect(product.variants.sample.images).not_to be_empty
