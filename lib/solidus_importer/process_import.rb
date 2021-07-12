@@ -30,7 +30,10 @@ module SolidusImporter
         state = @import.state
         state = :completed if rows.zero?
         state = :failed if ending_context[:success] == false
-        @import.update(state: state)
+
+        messages = ending_context[:messages].try(:join, ', ')
+
+        @import.update(state: state, messages: messages)
       end
       @import
     end

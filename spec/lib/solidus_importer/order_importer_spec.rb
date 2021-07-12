@@ -40,12 +40,12 @@ RSpec.describe SolidusImporter::OrderImporter do
 
       context 'when something went wrong during import' do
         before do
-          allow(SolidusImporter::SpreeCoreImporterOrder).to receive(:import).and_raise(StandardError)
+          allow(SolidusImporter::SpreeCoreImporterOrder).to receive(:import).and_raise(StandardError.new('message'))
         end
 
-        it 'finish #after_import regardless of the error' do
+        it 'finishes #after_import regardless of the error and surfaces the error' do
           expect { ending_context }.not_to raise_error
-          expect(ending_context).to match(hash_including(success: false))
+          expect(ending_context).to match(hash_including(success: false, messages: ['message', 'message']))
         end
       end
     end

@@ -29,7 +29,9 @@ module SolidusImporter
       orders.each do |_, params|
         user = params.delete(:user)
         SolidusImporter::SpreeCoreImporterOrder.import(user, params)
-      rescue StandardError
+      rescue StandardError => e
+        context[:messages] ||= []
+        context[:messages] << e.message
         context[:success] = false
       end
 
