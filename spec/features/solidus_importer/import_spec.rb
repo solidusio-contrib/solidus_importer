@@ -153,7 +153,7 @@ RSpec.describe 'Import from CSV files' do
     let(:order_numbers) { ['#MA-1097', '#MA-1098'] }
     let(:product) { create(:product) }
     let!(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
-    let(:imported_order) { Spree::Order.first }
+    let(:imported_order) { Spree::Order.find_by(number: '#MA-1097') }
     let(:tax_category) { product.tax_category }
 
     before do
@@ -167,13 +167,14 @@ RSpec.describe 'Import from CSV files' do
     it 'imports some orders' do
       expect { import }.to change(Spree::Order, :count).from(0).to(2)
       expect(Spree::Order.where(number: order_numbers).count).to eq(2)
+
       expect(import.state).to eq('completed')
       expect(Spree::LogEntry).to have_received(:create!).exactly(csv_file_rows).times
     end
 
     it 'imports order with line items' do
       import
-      expect(imported_order.line_items).not_to be_blank
+      expect(imported_order.line_items.count).to eq 2
     end
 
     it 'imports an order with bill address' do
@@ -200,7 +201,7 @@ RSpec.describe 'Import from CSV files' do
       expect(imported_order.payments).not_to be_empty
       expect(imported_order.payment_state).to eq 'paid'
       expect(imported_order.payments.first.state).to eq 'completed'
-      expect(imported_order.payment_total).to eq imported_order.payments.first.amount
+      expect(imported_order.payment_total).to eq imported_order.payments.sum(&:amount)
     end
 
     context 'when there is a promotion applicable to the order' do
