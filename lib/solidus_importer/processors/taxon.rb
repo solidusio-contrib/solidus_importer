@@ -24,6 +24,8 @@ module SolidusImporter
       end
 
       def process_taxons_type
+        return unless type
+
         add_taxon(prepare_taxon(type, options[:type_taxonomy]))
       end
 
@@ -45,11 +47,13 @@ module SolidusImporter
       end
 
       def tags
+        return [] unless @data['Tags'].presence
+
         @data['Tags'].split(',').map(&:strip)
       end
 
       def type
-        @data['Type']
+        @data['Type'].presence
       end
     end
   end

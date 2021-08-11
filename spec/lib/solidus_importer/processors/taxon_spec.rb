@@ -32,6 +32,36 @@ RSpec.describe SolidusImporter::Processors::Taxon do
       expect(tags_taxonomy).to be_present
     end
 
+    context "when data does not include type or tags" do
+      let(:data) {
+        build(:solidus_importer_row_product, :with_import).data
+      }
+
+      it "completes successfully" do
+        expect { described_method }.not_to raise_error
+      end
+    end
+
+    context "when data does not include tags" do
+      let(:data) {
+        build(:solidus_importer_row_product, :with_import, :with_type).data
+      }
+
+      it "completes successfully" do
+        expect { described_method }.not_to raise_error
+      end
+    end
+
+    context "when data does not include type" do
+      let(:data) {
+        build(:solidus_importer_row_product, :with_import, :with_tags).data
+      }
+
+      it "completes successfully" do
+        expect { described_method }.not_to raise_error
+      end
+    end
+
     context 'when taxon already exists on product' do
       let(:tags_taxonomy) { create(:taxonomy, name: 'Tags') }
       let(:taxon) { create(:taxon, name: 'Tag1', taxonomy: tags_taxonomy) }
