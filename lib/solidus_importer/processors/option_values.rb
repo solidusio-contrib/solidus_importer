@@ -25,7 +25,7 @@ module SolidusImporter
           )
           option_value.presentation = name
           option_value.save!
-          variant.option_values << option_value
+          variant.option_values << option_value unless variant.option_values.include?(option_value)
           variant.save!
         end
       end
