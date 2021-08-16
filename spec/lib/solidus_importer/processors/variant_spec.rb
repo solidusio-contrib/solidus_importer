@@ -39,6 +39,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
           expect(described_method).to eq(result)
           expect(product.variants.first.weight).to eq 20.0
           expect(product.variants.first.price).to eq 60.5
+          expect(product.variants.first.total_on_hand).to eq 5
         end
       end
 
