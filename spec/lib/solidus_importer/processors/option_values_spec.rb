@@ -10,7 +10,7 @@ RSpec.describe SolidusImporter::Processors::OptionValues do
     let(:variant) { create :base_variant }
     let(:product) { variant.product }
     let(:color) { create :option_type, presentation: 'Color' }
-    let(:size) { create :option_type, presentation: 'Size' }
+    let(:size) { create :option_type, presentation: 'Size', name: 'size' }
     let(:data) do
       {
         'Option1 Name' => 'Size',
@@ -49,6 +49,20 @@ RSpec.describe SolidusImporter::Processors::OptionValues do
       end
 
       it 'does not create option values for variant in row' do
+        expect { described_method }.not_to change(variant.option_values, :count)
+      end
+    end
+
+    context 'when an Option is imported a second time for the same variant' do
+      let(:data) do
+        {
+          'Option1 Name' => 'Size',
+          'Option1 Value' => '3XL'
+        }
+      end
+
+      it 'is not added' do
+        variant.set_option_value('size', '3xl')
         expect { described_method }.not_to change(variant.option_values, :count)
       end
     end
