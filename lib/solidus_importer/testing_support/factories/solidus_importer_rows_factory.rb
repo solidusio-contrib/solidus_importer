@@ -69,7 +69,8 @@ FactoryBot.define do
         'Handle' => 'a-product-slug-2',
         'Variant SKU' => 'a-variant-sku',
         'Variant Weight' => 20.0,
-        'Variant Price' => 60.5
+        'Variant Price' => 60.5,
+        'Variant Inventory Qty' => 5
       }
     end
 
