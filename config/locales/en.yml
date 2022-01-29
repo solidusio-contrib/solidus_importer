@@ -8,9 +8,11 @@ en:
       import_rows: Import rows
       log_entry: Log information
       messages: Messages
+      successful_rows: Successful rows
       target_entity: Target entity
       title: &solidus_importer_title
         Importer
+      total_rows: Total rows
       updated_at: Updated at
       updated_at_from: 'Updated at: start date'
       updated_at_to: 'Updated at: end date'
