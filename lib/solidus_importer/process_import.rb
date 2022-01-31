@@ -51,7 +51,7 @@ module SolidusImporter
 
     def scan
       data = CSV.parse(
-        File.read(@import.file.path),
+        Paperclip.io_adapters.for(@import.file).read.force_encoding(Encoding::UTF_8),
         headers: true,
         encoding: 'UTF-8',
         header_converters: ->(h) { h.strip }
