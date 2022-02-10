@@ -11,6 +11,12 @@ Add solidus_importer to your Gemfile:
 gem 'solidus_importer'
 ```
 
+Instead of a stable build, if you want to use the bleeding edge version, use this line:
+
+```ruby
+gem 'solidus_importer', github: 'solidusio-contrib/solidus_importer'
+```
+
 Bundle your dependencies and run the installation generator:
 
 ```shell
