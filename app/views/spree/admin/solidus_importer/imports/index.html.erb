@@ -49,7 +49,8 @@
           <th><%= sort_link @search, :id, t('spree.id') %></th>
           <th><%= sort_link @search, :import_type, t('spree.type') %></th>
           <th><%= sort_link @search, :state, t('spree.state') %></th>
-          <th><%= t('spree.solidus_importer.import_rows') %></th>
+          <th><%= t('spree.solidus_importer.successful_rows') %></th>
+          <th><%= t('spree.solidus_importer.total_rows') %></th>
           <th><%= sort_link @search, :updated_at, t('spree.solidus_importer.updated_at') %></th>
           <th class="actions"></th>
         </tr>
@@ -61,7 +62,8 @@
             <td><%= link_to import.id.to_s, link_details %></td>
             <td><%= import.import_type %></td>
             <td class="solidus_importer state-<%= import.state %>"><%= import.state %></td>
-            <th><%= import.rows.count %></th>
+            <td> <%= "#{import.rows.where(state: "completed").count}" %></td>
+            <td><%= import.rows.count %></td>
             <td><%= l(import.updated_at) %></td>
             <td><%= link_to 'Details', link_details, class: 'fa fa-eye icon_link', 'data-action': 'view' %></td>
           </tr>

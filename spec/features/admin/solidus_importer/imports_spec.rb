@@ -32,17 +32,36 @@ RSpec.describe 'Imports', type: :feature do
 
     before do
       shipping_method
-      allow(::SolidusImporter::ImportJob).to receive(:perform_later)
 
       visit described_path
       import_file.set products_csv_file
       select import_type, from: :solidus_importer_import_import_type if import_type
-      import_button.click
+
+      perform_enqueued_jobs { import_button.click }
     end
 
     it 'creates a new import' do
-      expect(::SolidusImporter::ImportJob).to have_received(:perform_later)
       expect(page).to have_content('Import has been successfully created!')
+
+      perform_enqueued_jobs
+
+      within("tbody") do
+        expect(page.all("tr td")[3..4].map(&:text)).to contain_exactly("7", "7")
+      end
+    end
+
+    context 'when there are failing rows' do
+      let(:products_csv_file) { solidus_importer_fixture_path('invalid_product.csv') }
+
+      it 'shows success/total row counts' do
+        expect(page).to have_content('Import has been successfully created!')
+
+        perform_enqueued_jobs
+
+        within("tbody") do
+          expect(page.all("tr td")[3..4].map(&:text)).to contain_exactly("0", "1")
+        end
+      end
     end
 
     context 'when no import type is selected' do
