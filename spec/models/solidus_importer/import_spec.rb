@@ -3,58 +3,45 @@
 require 'spec_helper'
 
 RSpec.describe SolidusImporter::Import do
-  subject(:described_instance) { described_class.new }
+  subject(:import) { described_class.new(import_type: :customers, import_file: import_file) }
 
-  it { expect(described_instance).not_to be_valid }
+  let(:import_file) { solidus_importer_fixture_path('customers.csv') }
 
-  context 'with an import file and type' do
-    before do
-      described_instance.import_type = :customers
-      described_instance.import_file = solidus_importer_fixture_path('customers.csv')
-    end
+  it { is_expected.to be_valid }
 
-    it { expect(described_instance).to be_valid }
-  end
+  context "with no file attached" do
+    let(:import_file) { nil }
 
-  describe '#import_file=' do
-    subject(:described_method) { described_instance.import_file = some_file }
-
-    let(:some_file) { nil }
-
-    it { expect { described_method }.to raise_error(SolidusImporter::Exception) }
-
-    context 'with a file' do
-      let(:some_file) { __FILE__ }
-
-      it { expect { described_method }.to change { described_instance.file.present? }.from(false).to(true) }
+    it "will not be valid" do
+      expect{ import.save! }.to raise_exception SolidusImporter::Exception, "Existing file required"
     end
   end
 
   describe '#finished?' do
-    subject(:described_method) { described_instance.finished? }
-
-    let(:rows) { OpenStruct.new }
-    let(:finished_rows) { [] }
-    let(:size) { 0 }
-
     before do
-      allow(rows).to receive_messages(failed_or_completed: finished_rows, size: size)
-      allow(described_instance).to receive_messages(rows: rows)
+      import.rows = rows
     end
 
-    it { is_expected.to be_truthy }
+    let(:rows) { create_list(:solidus_importer_row_customer, 2, state: :completed, import: subject) }
 
-    context 'with some rows' do
-      let(:finished_rows) { [1, 2] }
-      let(:size) { 3 }
+    it "is considered finished when all rows are completed" do
+      expect(import).to be_finished
+    end
 
-      it { is_expected.to be_falsey }
-
-      context 'with the size equals to the number of failed or completed rows' do
-        let(:size) { finished_rows.size }
-
-        it { is_expected.to be_truthy }
+    context "when any of the rows are failed" do
+      before do
+        rows.last.update!(state: :failed)
       end
+
+      it { is_expected.to be_finished }
+    end
+
+    context "when any of the rows are processing" do
+      before do
+        rows.last.update!(state: :processing)
+      end
+
+      it { is_expected.not_to be_finished }
     end
   end
 end
