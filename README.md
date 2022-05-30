@@ -23,6 +23,14 @@ Bundle your dependencies and run the installation generator:
 bin/rails generate solidus_importer:install
 ```
 
+## Upgrading
+
+After upgrading this gem, be sure to re-run the installation generator, and resolve any conflicts your modified `solidus_importer.rb` initializer file may have with new default configuration values.
+
+```shell
+bin/rails generate solidus_importer:install
+```
+
 ## Usage
 
 The imports can be fully managed from the backend UI, following progress (image processing can take a few seconds for each image).
@@ -111,6 +119,8 @@ Each list of processors can be configured to add, remove, or replace any of the 
 
 ### Advanced Configuration
 
+#### Defining Processors
+
 To define your own processors (in this example for products), add to the spree
 initializer:
 
@@ -131,6 +141,28 @@ The `importer` class is responsible of the whole import process of a single
 source file. The `processors` classes are responsible of the import of a single
 row of the source file; every processor has a `call` method (with an input
 `context`) which makes a specific action and updates the context if needed.
+
+#### Defining CSV format validators
+
+Custom validators for the CSV data can be defined to verify high level
+attributes about the CSV before it is parsed into individual import rows.
+
+This configuration can be found and overridden in the `solidus_importer.rb`
+initializer file.
+
+```rb
+SolidusImporter.configure do |config|
+  # By default, the imported CSV data is validated to have headers that exist and are not blank
+  config.import_data_validators = [
+    ->(csv_table) {
+      headers = csv_table.headers
+      if headers.blank? || !headers.exclude?(nil)
+        'Invalid headers'
+      end
+    }
+  ]
+end
+```
 
 ## Development
 

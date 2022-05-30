@@ -51,6 +51,23 @@ module SolidusImporter
     # argument. Using a lambda will verify that the correct number of arguments
     # are passed, whereas using a plain Proc won't.
     preference :row_exception_handler, :callable, default: proc { ->(exception, context) {} }
+
+    # An array of callables that will validate the imported data after it has
+    # been parsed and before it is imported. A validation message should be
+    # returned on failure, otherwise `nil` should be returned on success.
+    # The default value for this preference is set in the `solidus_importer.rb`
+    # initializer file.
+    #
+    # A `CSV::Table` object will be passed to the callable, e.g.
+    # SolidusImporter::Config.csv_format_validators = [
+    #   ->(csv_table) do
+    #     headers = csv_table.headers
+    #     if headers.blank? || !headers.exclude?(nil)
+    #       'Invalid headers'
+    #     end
+    #   end
+    # ]
+    preference :csv_format_validators, :array, default: []
   end
 
   class << self

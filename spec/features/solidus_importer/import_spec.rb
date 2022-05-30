@@ -218,4 +218,14 @@ RSpec.describe 'Import from CSV files' do
       end
     end
   end
+
+  context 'with a CSV file that has invalid headers' do
+    let(:import_file) { solidus_importer_fixture_path('invalid_headers.csv') }
+    let(:import_type) { :products }
+
+    it 'fails to import the CSV' do
+      expect { import }.not_to change(Spree::Product, :count)
+      expect(import.messages).to eq("Invalid headers")
+    end
+  end
 end

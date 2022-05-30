@@ -61,9 +61,10 @@ module SolidusImporter
 
     def validate_csv_format(csv_table)
       messages = []
-      headers = csv_table.headers
-      messages << 'Invalid headers' if headers.blank? || !headers.exclude?(nil)
-      messages
+      ::SolidusImporter.config.csv_format_validators.each do |validator|
+        messages << validator.call(csv_table)
+      end
+      messages.compact
     end
 
     def prepare_rows(data)
