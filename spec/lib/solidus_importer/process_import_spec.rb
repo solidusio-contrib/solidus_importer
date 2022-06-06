@@ -10,17 +10,39 @@ RSpec.describe SolidusImporter::ProcessImport do
 
     let(:rows_count) { import.rows.size }
 
-    context 'with a CSV file with invalid headers' do
+    context "when the CSV file does not conform to the configured data validators" do
       let(:rows) { build_list(:solidus_importer_row_customer, 3) }
       let(:import) do
         create(:solidus_importer_import_customers, rows: rows).tap do |import|
-          import.import_file = solidus_importer_fixture_path('invalid_headers.csv')
+          import.import_file = solidus_importer_fixture_path('custom_data_validator_invalid.csv')
+        end
+      end
+      let(:custom_validator) {
+        ->(csv_table) do
+          headers = csv_table.headers
+          if headers.length > 2
+            'Maximum 2 headers allowed'
+          end
+        end
+      }
+
+      around do |example|
+        original_validators = SolidusImporter.config.csv_format_validators
+        SolidusImporter.config.csv_format_validators = [custom_validator]
+
+        begin
+          example.run
+        ensure
+          SolidusImporter.config.csv_format_validators = original_validators
         end
       end
 
-      it 'fails to import data' do
-        expect(described_method.messages).to eq('Invalid headers')
+      it 'fails to import the data' do
         expect(described_method.state).to eq('failed')
+      end
+
+      it "reports the validation failure on the import" do
+        expect(described_method.messages).to eq('Maximum 2 headers allowed')
       end
     end
 
