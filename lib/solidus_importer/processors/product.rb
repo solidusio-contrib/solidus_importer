@@ -35,10 +35,9 @@ module SolidusImporter
           product.available_on = available? ? options[:available_on] : options[:not_available]
           product.shipping_category = options[:shipping_category]
 
-          # Apply the row attributes
           product.name = @data['Title'] unless @data['Title'].nil?
+          product.description = @data['Body (HTML)'] || ''
 
-          # Save the product
           product.save!
         end
       end

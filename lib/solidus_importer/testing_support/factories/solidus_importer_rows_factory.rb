@@ -46,7 +46,11 @@ FactoryBot.define do
   end
 
   factory :solidus_importer_row_product, class: 'SolidusImporter::Row' do
-    data { { 'Handle' => 'a-product-slug', 'Title' => 'A product name' } }
+    data {
+      {
+        'Handle' => 'a-product-slug', 'Title' => 'A product name', 'Body (HTML)' => '</a-product>'
+      }
+    }
 
     trait :with_import do
       after(:build) do |row|

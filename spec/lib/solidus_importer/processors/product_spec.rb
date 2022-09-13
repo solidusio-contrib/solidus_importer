@@ -29,10 +29,12 @@ RSpec.describe SolidusImporter::Processors::Product do
 
       before { shipping_category }
 
-      it 'creates a new product' do
+      it 'creates a new product with the attributes in the data' do
         expect { described_method }.to change { Spree::Product.count }.by(1)
         expect(described_method).to eq(result)
         expect(product).not_to be_available
+        expect(product.title).to eq 'A Product'
+        expect(product.description).to eq '</a-product>'
       end
 
       context 'when "Published" is "true"' do
