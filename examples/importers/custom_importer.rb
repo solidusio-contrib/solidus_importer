@@ -7,7 +7,7 @@ module SolidusImporter
     #
     # Install: set the class as importer in solidus_importer configuration
     class CustomImporter < ::SolidusImporter::BaseImporter
-      def after_import(context)
+      def after_group_import(import, context)
         ActionMailer::Base.mail(
           from: 'some_email',
           to: 'some_email_2',

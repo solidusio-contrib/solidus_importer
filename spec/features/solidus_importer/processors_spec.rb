@@ -45,12 +45,12 @@ RSpec.describe 'Set up a some processors' do
   before do
     importer
     allow(importer_class).to receive(:new).and_return(importer)
-    allow(importer).to receive(:after_import).and_call_original
+    allow(importer).to receive(:after_group_import).and_call_original
   end
 
   it 'creates 2 users and check the result' do
     expect { process_import }.to change(Spree::User, :count).from(0).to(2)
-    expect(importer).to have_received(:after_import).once
+    expect(importer).to have_received(:after_group_import).once
     expect(importer.checks).to eq [true, nil, nil, true]
   end
 end

@@ -7,8 +7,8 @@ RSpec.describe SolidusImporter::OrderImporter do
 
   let(:options) { {} }
 
-  describe '#after_import' do
-    subject(:ending_context) { described_instance.after_import(context) }
+  describe '#after_group_import' do
+    subject(:ending_context) { described_instance.after_group_import(context) }
 
     let(:context) { { success: true } }
 
@@ -43,7 +43,7 @@ RSpec.describe SolidusImporter::OrderImporter do
           allow(SolidusImporter::SpreeCoreImporterOrder).to receive(:import).and_raise(StandardError)
         end
 
-        it 'finish #after_import regardless of the error' do
+        it 'finish #after_group_import regardless of the error' do
           expect { ending_context }.not_to raise_error
           expect(ending_context).to match(hash_including(success: false))
         end

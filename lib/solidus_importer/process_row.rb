@@ -13,30 +13,27 @@ module SolidusImporter
 
     def process(initial_context)
       context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
+
       @importer.processors.each do |processor|
         processor.call(context)
+
       rescue StandardError => e
-        context.merge!(success: false, messages: e.message) # rubocop:disable Performance/RedundantMerge
+        context.merge!(success: false, messages: e.message)
         break
       end
 
       @importer.handle_row_import(context)
 
+
       @row.update!(
         state: context[:success] ? :completed : :failed,
         messages: context[:messages]
       )
-      check_import_finished(context)
+
       context
     end
 
     private
-
-    def check_import_finished(_context)
-      return unless @row.import.finished?
-
-      @row.import.update!(state: (@row.import.rows.failed.any? ? :failed : :completed))
-    end
 
     def validate!
       raise SolidusImporter::Exception, 'No importer defined' if !@importer
