@@ -11,7 +11,7 @@ RSpec.describe SolidusImporter::BaseImporter do
     it { is_expected.to respond_to(:after_group_import) }
 
     context 'when ending contexts of rows is a success' do
-      subject(:described_method) { described_instance.after_group_import(context) }
+      subject(:described_method) { described_instance.after_group_import({}, context) }
 
       let(:context) { { success: true } }
 

@@ -9,6 +9,8 @@ module SolidusImporter
   class ProcessImport
     # this in injected mostly to make testing this class more easily.
     DEFAULT_GROUP_PROCESSOR = ->(import, row_ids) {
+      return ::SolidusImporter::ProcessRowGroupJob.perform_now(import.id, row_ids) if Rails.env.test?
+
       ::SolidusImporter::ProcessRowGroupJob.perform_later(import.id, row_ids)
     }
 
@@ -78,7 +80,7 @@ module SolidusImporter
       end
     end
 
-    def queue_process_rows(initial_context)
+    def queue_process_rows(_initial_context)
       group_of_rows = @import.rows.created_or_failed.order(id: :asc).group_by(&:entity_id)
       group_of_rows.each do |(_, group)|
         row_ids = group.map(&:id)

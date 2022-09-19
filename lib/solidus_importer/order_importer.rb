@@ -38,13 +38,13 @@ module SolidusImporter
     end
 
     def after_group_import(import, context)
-      orders.each do |_, params|
+      orders.each do |number, params|
         user = params.delete(:user)
         SolidusImporter::SpreeCoreImporterOrder.import(user, params)
       rescue StandardError => e
         Spree::LogEntry.create!(
           source: import,
-          details: "#{context[:order][:number]} => #{e.message}"
+          details: "#{number} => #{e.message}"
         )
       end
 

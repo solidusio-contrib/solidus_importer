@@ -18,12 +18,12 @@ module SolidusImporter
         processor.call(context)
 
       rescue StandardError => e
-        context.merge!(success: false, messages: e.message)
+        context[:success] = false
+        context[:messages] = e.message
         break
       end
 
       @importer.handle_row_import(context)
-
 
       @row.update!(
         state: context[:success] ? :completed : :failed,
