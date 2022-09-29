@@ -20,7 +20,7 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
 
     context 'with a variant and a invalid image in row data' do
       let(:context) do
-        { data: { 'Variant Image' => 'some missing image' }, variant: build_stubbed(:variant) }
+        { data: { 'Variant Image' => 'some missing image' }, variant: build(:variant) }
       end
 
       it 'raises an exception' do
@@ -32,7 +32,7 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
       let(:context) do
         {
           data: { 'Variant Image' => 'http://remote-service.net/thinking-cat.jpg' },
-          variant: build_stubbed(:variant)
+          variant: build(:variant)
         }
       end
       let(:uri) do

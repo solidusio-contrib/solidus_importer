@@ -6,9 +6,10 @@ RSpec.describe SolidusImporter::OrderImporter do
   subject(:described_instance) { described_class.new(options) }
 
   let(:options) { {} }
+  let(:import) { create(:solidus_importer_import_orders) }
 
   describe '#after_group_import' do
-    subject(:ending_context) { described_instance.after_group_import({}, context) }
+    subject(:ending_context) { described_instance.after_group_import(import, context) }
 
     let(:context) { { success: true } }
 

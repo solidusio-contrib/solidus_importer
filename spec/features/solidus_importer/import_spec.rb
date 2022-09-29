@@ -17,7 +17,7 @@ RSpec.describe 'Import from CSV files' do
     let(:import_type) { :customers }
     let(:csv_file_rows) { 4 }
     let(:user_emails) { ['jane.doe@acme.com', 'john.doe@acme.com'] }
-    let(:imported_customer) { Spree::User.last }
+    let(:imported_customer) { Spree::User.find_by(email: 'john.doe@acme.com') }
     let(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
 
     before { state }
@@ -118,7 +118,7 @@ RSpec.describe 'Import from CSV files' do
       it 'imports a some products and a clay pot with two variants' do
         expect { import }.to change(Spree::Product, :count).from(0)
         # TODO: in this case the state will be failed since not all rows got through.
-        expect(import.reload.state).to eq('completed')
+        expect(import.reload.state).to eq('failed')
 
         product = Spree::Product.find_by(slug: 'gemstone')
 
