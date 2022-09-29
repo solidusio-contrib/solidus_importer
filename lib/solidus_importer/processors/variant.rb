@@ -29,7 +29,7 @@ module SolidusImporter
           variant.price = @data['Variant Price'] if @data['Variant Price'].present?
 
           # ensure the sku is properly set (for master sku)
-          variant.sku = sku
+          variant.sku = sku if master_variant?
 
           # Save the product
           variant.save!

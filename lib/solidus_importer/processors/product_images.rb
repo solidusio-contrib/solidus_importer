@@ -3,6 +3,12 @@
 module SolidusImporter
   module Processors
     class ProductImages < Base
+      class URIParser
+        def self.parse(uri)
+          URI.parse(uri)
+        end
+      end
+
       def call(context)
         @data = context.fetch(:data)
         return unless product_image?
@@ -14,7 +20,7 @@ module SolidusImporter
       private
 
       def prepare_image
-        attachment = URI.parse(@data['Image Src']).open
+        attachment = URIParser.parse(@data['Image Src']).open
         Spree::Image.new(attachment: attachment, alt: @data['Alt Text'])
       end
 

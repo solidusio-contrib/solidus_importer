@@ -4,13 +4,19 @@ require 'csv'
 
 module SolidusImporter
   ##
-  # This class parse the source file and create the rows (scan). Then it asks to
-  # Process Row to process each one.
+  # This class parses the source file and creates the rows (scan)
+  # Then it processes the Rows grouping by their `entity_id`, by default in the background
   class ProcessImport
-    attr_reader :importer
+    # this in injected mostly to make testing this class more easily.
+    DEFAULT_GROUP_PROCESSOR = ->(import, row_ids) {
+      return ::SolidusImporter::ProcessRowGroupJob.perform_now(import.id, row_ids) if Rails.env.test?
 
-    def initialize(import, importer_options: nil)
+      ::SolidusImporter::ProcessRowGroupJob.perform_later(import.id, row_ids)
+    }
+
+    def initialize(import, importer_options: nil, group_processor: DEFAULT_GROUP_PROCESSOR)
       @import = import
+      @group_processor = group_processor
       options = importer_options || ::SolidusImporter::Config.solidus_importer[@import.import_type.to_sym]
       @importer = options[:importer].new(options)
       @import.importer = @importer
@@ -25,13 +31,9 @@ module SolidusImporter
       initial_context = scan_required ? scan : { success: true }
       initial_context = @importer.before_import(initial_context)
       unless @import.failed?
-        rows = process_rows(initial_context)
-        ending_context = @importer.after_import(initial_context)
-        state = @import.state
-        state = :completed if rows.zero?
-        state = :failed if ending_context[:success] == false
-        @import.update(state: state)
+        queue_process_rows(initial_context)
       end
+
       @import
     end
 
@@ -45,6 +47,8 @@ module SolidusImporter
     end
 
     private
+
+    attr_reader :importer
 
     def scan
       data = CSV.parse(
@@ -76,12 +80,12 @@ module SolidusImporter
       end
     end
 
-    def process_rows(initial_context)
-      rows = @import.rows.created_or_failed.order(id: :asc)
-      rows.each do |row|
-        ::SolidusImporter::ProcessRow.new(@importer, row).process(initial_context)
+    def queue_process_rows(_initial_context)
+      group_of_rows = @import.rows.created_or_failed.order(id: :asc).group_by(&:entity_id)
+      group_of_rows.each do |(_, group)|
+        row_ids = group.map(&:id)
+        @group_processor.call(@import, row_ids)
       end
-      rows.size
     end
 
     def validate!

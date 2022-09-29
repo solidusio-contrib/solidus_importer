@@ -37,6 +37,8 @@ module SolidusImporter
       }
     }
 
+    preference :after_group_import_error_reporter, :string, default: ''
+
     def available_types
       solidus_importer.keys
     end

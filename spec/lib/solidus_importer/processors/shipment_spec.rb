@@ -16,7 +16,7 @@ RSpec.describe SolidusImporter::Processors::Shipment do
     it 'put shipments_attributes into order data' do
       described_method
       expect(context).to have_key(:order)
-      expect(context[:order][:shipments_attributes]).not_to be_empty
+      expect(context[:order][:shipment_attributes]).not_to be_empty
     end
   end
 end

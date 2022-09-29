@@ -30,8 +30,8 @@ RSpec.describe SolidusImporter::Import do
     end
   end
 
-  describe '#finished?' do
-    subject(:described_method) { described_instance.finished? }
+  describe '#finished_all_rows?' do
+    subject(:described_method) { described_instance.finished_all_rows? }
 
     let(:rows) { OpenStruct.new }
     let(:finished_rows) { [] }
@@ -39,7 +39,7 @@ RSpec.describe SolidusImporter::Import do
 
     before do
       allow(rows).to receive_messages(failed_or_completed: finished_rows, size: size)
-      allow(described_instance).to receive_messages(rows: rows)
+      allow(described_instance).to receive_messages(rows: rows) # rubocop:disable RSpec/SubjectStub
     end
 
     it { is_expected.to be_truthy }

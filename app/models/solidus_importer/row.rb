@@ -22,5 +22,11 @@ module SolidusImporter
 
     validates :data, presence: true, allow_blank: false
     validates :state, presence: true, allow_blank: false
+
+    before_create :infer_entity_id_from_data
+
+    def infer_entity_id_from_data
+      self.entity_id = data['Name'] || data['Email'] || data['Handle']
+    end
   end
 end

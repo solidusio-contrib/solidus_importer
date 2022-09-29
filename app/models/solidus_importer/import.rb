@@ -29,8 +29,12 @@ module SolidusImporter
       %w[created failed].include? state
     end
 
-    def finished?
+    def finished_all_rows?
       rows.failed_or_completed.size == rows.size
+    end
+
+    def finish!
+      update!(state: (rows.failed.any? ? :failed : :completed)) 
     end
 
     def import_file=(path)

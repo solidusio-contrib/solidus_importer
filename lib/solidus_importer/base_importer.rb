@@ -21,7 +21,7 @@ module SolidusImporter
 
     ##
     # Defines a method called after the import process is finished
-    def after_import(context)
+    def after_group_import(import, context)
       context
     end
 
