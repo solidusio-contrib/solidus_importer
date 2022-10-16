@@ -18,9 +18,11 @@ RSpec.describe 'Import from CSV files' do
     let(:csv_file_rows) { 4 }
     let(:user_emails) { ['jane.doe@acme.com', 'john.doe@acme.com'] }
     let(:imported_customer) { Spree::User.last }
-    let(:state) { create(:state, abbr: 'ON', country_iso: 'CA') }
 
-    before { state }
+    # rubocop:disable RSpec/LetSetup
+    let!(:state_on) { create(:state, abbr: 'ON', country_iso: 'CA') }
+    let!(:state_qc) { create(:state, abbr: 'QC', country_iso: 'CA') }
+    # rubocop:enable RSpec/LetSetup
 
     it 'imports some customers' do
       expect { import }.to change(Spree::User, :count).by(2)

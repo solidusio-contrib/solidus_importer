@@ -35,7 +35,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
         before { data.merge! 'Option1 Value' => 'Some value' }
 
         it 'creates a new variant' do
-          expect { described_method }.to change { Spree::Variant.count }.by(1)
+          expect { described_method }.to change(Spree::Variant, :count).by(1)
           expect(described_method).to eq(result)
           expect(product.variants.first.weight).to eq 20.0
           expect(product.variants.first.price).to eq 60.5
@@ -49,7 +49,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
         before { data.merge! 'Option1 Value' => 'Default Title' }
 
         it 'updates master variant' do
-          expect { described_method }.not_to(change { Spree::Variant.count })
+          expect { described_method }.not_to(change(Spree::Variant, :count))
           expect(described_method).to eq(result)
           expect(product.master.weight).to eq 20.0
           expect(product.master.price).to eq 60.5
@@ -62,7 +62,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
         before { data.merge! 'Option1 Value' => nil }
 
         it 'updates master variant' do
-          expect { described_method }.not_to(change { Spree::Variant.count })
+          expect { described_method }.not_to(change(Spree::Variant, :count))
           expect(described_method).to eq(result)
           expect(product.master.weight).to eq 20.0
           expect(product.master.price).to eq 60.5
@@ -76,7 +76,7 @@ RSpec.describe SolidusImporter::Processors::Variant do
         before { data.merge! 'Option1 Value' => 'Some value' }
 
         it 'updates the variant' do
-          expect { described_method }.not_to(change { Spree::Variant.count })
+          expect { described_method }.not_to(change(Spree::Variant, :count))
           expect(described_method).to eq(result)
           expect(variant.reload.weight.to_f).to eq(data['Variant Weight'])
           expect(variant.reload.price).to eq(data['Variant Price'])

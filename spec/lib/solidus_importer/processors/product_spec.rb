@@ -30,7 +30,7 @@ RSpec.describe SolidusImporter::Processors::Product do
       before { shipping_category }
 
       it 'creates a new product' do
-        expect { described_method }.to change { Spree::Product.count }.by(1)
+        expect { described_method }.to change(Spree::Product, :count).by(1)
         expect(described_method).to eq(result)
         expect(product).not_to be_available
       end
@@ -58,7 +58,7 @@ RSpec.describe SolidusImporter::Processors::Product do
         let!(:product) { create(:product, slug: data['Handle']) }
 
         it 'updates the product' do
-          expect { described_method }.not_to(change { Spree::Product.count })
+          expect { described_method }.not_to(change(Spree::Product, :count))
           expect(described_method).to eq(result)
           expect(product.reload.name).to eq('A product name')
         end
