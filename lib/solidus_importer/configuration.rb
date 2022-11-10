@@ -2,6 +2,8 @@
 
 module SolidusImporter
   class Configuration < Spree::Preferences::Configuration
+    attr_writer :processing_queue
+
     preference :solidus_importer, :hash, default: {
       customers: {
         importer: SolidusImporter::BaseImporter,
@@ -41,6 +43,10 @@ module SolidusImporter
 
     def available_types
       solidus_importer.keys
+    end
+
+    def processing_queue
+      @processing_queue ||= :default
     end
   end
 

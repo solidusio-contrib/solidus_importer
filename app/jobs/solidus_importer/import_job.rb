@@ -2,7 +2,7 @@
 
 module SolidusImporter
   class ImportJob < ApplicationJob
-    queue_as :default
+    queue_as { SolidusImporter.configuration.processing_queue }
 
     retry_on ActiveRecord::Deadlocked
 

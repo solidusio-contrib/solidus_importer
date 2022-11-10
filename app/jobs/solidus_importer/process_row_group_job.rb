@@ -2,7 +2,7 @@
 
 module SolidusImporter
   class ProcessRowGroupJob < ApplicationJob
-    queue_as :default
+    queue_as { SolidusImporter.configuration.processing_queue }
 
     def perform(import_id, row_ids)
       import = SolidusImporter::Import.find(import_id)
