@@ -48,7 +48,7 @@ RSpec.describe SolidusImporter::Processors::Customer do
       let(:result) { context.merge(user: Spree::User.last) }
 
       it 'creates a new user' do
-        expect { described_method }.to change { Spree::User.count }.by(1)
+        expect { described_method }.to change(Spree::User, :count).by(1)
         expect(described_method).to eq(result)
       end
 
@@ -59,7 +59,7 @@ RSpec.describe SolidusImporter::Processors::Customer do
         before { allow(Spree::User).to receive(:find_or_initialize_by).and_return(user) }
 
         it 'updates the user' do
-          expect { described_method }.not_to(change { Spree::User.count })
+          expect { described_method }.not_to(change(Spree::User, :count))
           expect(described_method).to eq(result)
         end
       end

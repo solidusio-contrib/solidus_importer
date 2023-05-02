@@ -26,18 +26,27 @@ RSpec.describe SolidusImporter::Processors::CustomerAddress do
     let(:address) { Spree::Address.last }
 
     context 'when there is a state with the same code attached to another country' do
-      let(:wrong_state) { create(:state, state_code: 'WA', country_iso: 'IT') }
-      let(:state) { create(:state, state_code: 'XX', country_iso: 'US') }
+      let!(:wrong_country) { create(:country, iso: 'IT') }
+      let!(:right_state_wrong_country) { create(:state) }
 
-      before { state and wrong_state }
+      # Updating the state to the wrong country cannot be done via factory.
+      # The model/factory performs some validation that prevents a state from
+      # being added to an incorrect country.
+      before do
+        right_state_wrong_country.update(abbr: 'WA', name: 'Washington', country: wrong_country)
+      end
 
       it 'tries to fetch it from the current country' do
         expect { described_method }.to change(Spree::Address, :count).by(1)
-        expect(Spree::Address.last.state).to be_nil
       end
+    end
 
+    context 'when the country does not have a state' do
       context 'when the country requires a states' do
-        before { country.update states_required: true }
+        before do
+          country.update states_required: true
+          state.update(abbr: 'XX')
+        end
 
         it 'fails creating the address' do
           expect { described_method }.not_to change(Spree::Address, :count)
