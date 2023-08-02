@@ -1,20 +1,15 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-branch = ENV.fetch('SOLIDUS_BRANCH', 'master')
-solidus_git, solidus_frontend_git = if (branch == 'master') || (branch >= 'v3.2')
-                                      %w[solidusio/solidus solidusio/solidus_frontend]
-                                    else
-                                      %w[solidusio/solidus] * 2
-                                    end
-gem 'solidus', github: solidus_git, branch: branch
-gem 'solidus_frontend', github: solidus_frontend_git, branch: branch
+branch = ENV.fetch('SOLIDUS_BRANCH', 'main')
+git "https://github.com/solidusio/solidus.git", branch: branch do
+  gem 'solidus_api'
+  gem 'solidus_backend'
+  gem 'solidus_core'
+end
+gem 'solidus_frontend', git: "https://github.com/solidusio/solidus_frontend.git", branch: branch
 
-# Needed to help Bundler figure out how to resolve dependencies,
-# otherwise it takes forever to resolve them.
-# See https://github.com/bundler/bundler/issues/6677
 gem 'rails', '>0.a'
 
 # Provides basic authentication functionality for testing parts of your engine
