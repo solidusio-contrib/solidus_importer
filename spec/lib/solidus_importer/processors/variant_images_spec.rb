@@ -32,7 +32,7 @@ RSpec.describe SolidusImporter::Processors::VariantImages do
       let(:context) do
         {
           data: { 'Variant Image' => 'http://remote-service.net/thinking-cat.jpg' },
-          variant: build_stubbed(:variant)
+          variant: build(:variant)
         }
       end
       let(:uri) do
