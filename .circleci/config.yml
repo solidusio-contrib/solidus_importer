@@ -33,7 +33,9 @@ jobs:
       - solidusio_extensions/run-tests
       # - browser-tools/install-chrome
   lint-code:
-    executor: solidusio_extensions/sqlite-memory
+    executor:
+      name: solidusio_extensions/sqlite
+      ruby_version: '2.7'
     steps:
       - solidusio_extensions/lint-code
 
