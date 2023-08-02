@@ -32,10 +32,10 @@ jobs:
     steps:
       - solidusio_extensions/run-tests
       # - browser-tools/install-chrome
-lint-code:
-  executor: solidusio_extensions/sqlite-memory
-  steps:
-    - solidusio_extensions/lint-code
+  lint-code:
+    executor: solidusio_extensions/sqlite-memory
+    steps:
+      - solidusio_extensions/lint-code
 
 workflows:
   "Run specs on supported Solidus versions":
@@ -43,6 +43,8 @@ workflows:
       - run-specs-with-postgres
       - run-specs-with-mysql
       - run-specs-with-sqlite
+      - lint-code
+
   "Weekly run specs against main":
     triggers:
       - schedule:
