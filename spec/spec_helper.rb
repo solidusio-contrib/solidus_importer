@@ -2,6 +2,7 @@
 
 # Configure Rails Environment
 ENV['RAILS_ENV'] = 'test'
+ENV['FRONTEND'] = 'none'
 
 # Run Coverage report
 require 'solidus_dev_support/rspec/coverage'
