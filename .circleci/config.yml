@@ -11,11 +11,12 @@ jobs:
   run-specs-with-postgres:
     executor: solidusio_extensions/postgres
     steps:
-      - solidusio_extensions/run-tests
-  run-specs-with-mysql:
-    executor: solidusio_extensions/mysql
-    steps:
-      - solidusio_extensions/run-tests
+      - checkout
+      - solidusio_extensions/dependencies
+      - solidusio_extensions/test-branch:
+          branch: v3.3
+          rails_version: '~> 7.0'
+      - solidusio_extensions/store-test-results
   lint-code:
     executor: solidusio_extensions/sqlite-memory
     steps:
