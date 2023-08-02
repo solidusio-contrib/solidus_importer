@@ -1,7 +1,10 @@
 version: 2.1
 
 orbs:
-  # Always take the latest version of the orb, this allows us to
+  # Required for feature specs.
+  # browser-tools: circleci/browser-tools@1.1
+
+  # Always take the latest version of the Orb, this allows us to
   # run specs against Solidus supported versions only without the need
   # to change this configuration every time a Solidus version is released
   # or goes EOL.
@@ -9,33 +12,44 @@ orbs:
 
 jobs:
   run-specs-with-postgres:
-    executor: solidusio_extensions/postgres
+    executor:
+      name: solidusio_extensions/postgres
+      ruby_version: '3.2'
     steps:
       - solidusio_extensions/run-tests
+      # - browser-tools/install-chrome
   run-specs-with-mysql:
-    executor: solidusio_extensions/mysql
+    executor:
+      name: solidusio_extensions/mysql
+      ruby_version: '3.1'
     steps:
       - solidusio_extensions/run-tests
-  lint-code:
-    executor: solidusio_extensions/sqlite-memory
+      # - browser-tools/install-chrome
+  run-specs-with-sqlite:
+    executor:
+      name: solidusio_extensions/sqlite
+      ruby_version: '3.0'
     steps:
-      - solidusio_extensions/lint-code
+      - solidusio_extensions/run-tests
+      # - browser-tools/install-chrome
+lint-code:
+  executor: solidusio_extensions/sqlite-memory
+  steps:
+    - solidusio_extensions/lint-code
 
 workflows:
   "Run specs on supported Solidus versions":
     jobs:
       - run-specs-with-postgres
       - run-specs-with-mysql
-      - lint-code
-
-  "Weekly run specs against master":
+      - run-specs-with-sqlite
+  "Weekly run specs against main":
     triggers:
       - schedule:
           cron: "0 0 * * 4" # every Thursday
           filters:
             branches:
               only:
-                - master
+                - main
     jobs:
-      - run-specs-with-postgres
-      - run-specs-with-mysql
+      - run-specs-with-sqlite
