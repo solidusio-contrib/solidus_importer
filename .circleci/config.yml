@@ -13,6 +13,9 @@ jobs:
     steps:
       - checkout
       - solidusio_extensions/dependencies
+      - run:
+          name: "Run specs on the legacy frontend"
+          command: export FRONTEND=solidus_frontend
       - solidusio_extensions/test-branch:
           branch: v3.3
           rails_version: '~> 7.0'
