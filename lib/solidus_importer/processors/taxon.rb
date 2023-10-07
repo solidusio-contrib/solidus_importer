@@ -42,7 +42,8 @@ module SolidusImporter
       def prepare_taxon(name, taxonomy)
         Spree::Taxon.find_or_initialize_by(
           name: name,
-          taxonomy_id: taxonomy.id
+          taxonomy_id: taxonomy.id,
+          parent: taxonomy.root
         )
       end
 
