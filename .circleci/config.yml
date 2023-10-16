@@ -9,15 +9,37 @@ orbs:
 
 jobs:
   run-specs-with-postgres:
-    executor: solidusio_extensions/postgres
+    executor:
+      name: solidusio_extensions/postgres
+      ruby_version: '3.0'
     steps:
-      - solidusio_extensions/run-tests
+      - checkout
+      - solidusio_extensions/dependencies
+      - run:
+          name: "Run specs on the legacy frontend with postgres"
+          command: export FRONTEND=solidus_frontend
+      - solidusio_extensions/test-branch:
+          branch: v3.3
+          rails_version: '~> 7.0'
+      - solidusio_extensions/store-test-results
   run-specs-with-mysql:
-    executor: solidusio_extensions/mysql
+    executor:
+      name: solidusio_extensions/mysql
+      ruby_version: '3.0'
     steps:
-      - solidusio_extensions/run-tests
+      - checkout
+      - solidusio_extensions/dependencies
+      - run:
+          name: "Run specs on the legacy frontend with mysql"
+          command: export FRONTEND=solidus_frontend
+      - solidusio_extensions/test-branch:
+          branch: v3.3
+          rails_version: '~> 7.0'
+      - solidusio_extensions/store-test-results
   lint-code:
-    executor: solidusio_extensions/sqlite-memory
+    executor:
+      name: solidusio_extensions/sqlite-memory
+      ruby_version: '3.0'
     steps:
       - solidusio_extensions/lint-code
 
