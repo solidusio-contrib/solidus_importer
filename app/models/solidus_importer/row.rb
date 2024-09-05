@@ -22,5 +22,9 @@ module SolidusImporter
 
     validates :data, presence: true, allow_blank: false
     validates :state, presence: true, allow_blank: false
+
+    def self.ransackable_attributes(_auth_object = nil)
+      ["created_at", "data", "id", "id_value", "import_id", "messages", "state", "updated_at"]
+    end
   end
 end

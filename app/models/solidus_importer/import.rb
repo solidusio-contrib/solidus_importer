@@ -39,6 +39,10 @@ module SolidusImporter
       self.file = File.open(path, 'r')
     end
 
+    def self.ransackable_attributes(_auth_object = nil)
+      ["created_at", "file", "file_content_type", "file_file_name", "file_file_size", "file_updated_at", "id", "id_value", "import_type", "messages", "state", "updated_at"]
+    end
+
     class << self
       def available_types
         SolidusImporter::Import.select(:import_type).order(:import_type).group(:import_type).pluck(:import_type)
