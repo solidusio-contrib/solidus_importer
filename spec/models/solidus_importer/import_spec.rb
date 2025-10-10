@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe SolidusImporter::Import do
   subject(:import) { described_class.new(import_type: :customers, import_file: import_file) }
 
-  let(:import_file) { solidus_importer_fixture_path('customers.csv') }
+  let(:import_file) { solidus_importer_fixture_path("customers.csv") }
 
   it { is_expected.to be_valid }
 
@@ -13,11 +13,11 @@ RSpec.describe SolidusImporter::Import do
     let(:import_file) { nil }
 
     it "will not be valid" do
-      expect{ import.save! }.to raise_exception SolidusImporter::Exception, "Existing file required"
+      expect { import.save! }.to raise_exception SolidusImporter::Exception, "Existing file required"
     end
   end
 
-  describe '#finished?' do
+  describe "#finished?" do
     before do
       import.rows = rows
     end

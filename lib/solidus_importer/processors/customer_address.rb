@@ -28,19 +28,19 @@ module SolidusImporter
       private
 
       def country
-        @country ||= Spree::Country.find_by(iso: @data['Country Code']) if @data['Country Code']
+        @country ||= Spree::Country.find_by(iso: @data["Country Code"]) if @data["Country Code"]
       end
 
       def state
-        @state ||= country&.states&.find_by(abbr: @data['Province Code']) if @data['Province Code']
+        @state ||= country&.states&.find_by(abbr: @data["Province Code"]) if @data["Province Code"]
       end
 
       def firstname
-        @data['First Name']
+        @data["First Name"]
       end
 
       def lastname
-        @data['Last Name']
+        @data["Last Name"]
       end
 
       def name
@@ -49,19 +49,19 @@ module SolidusImporter
 
       def address_attributes
         name_attrs = if SolidusImporter.combined_first_and_last_name_in_address?
-                       { name: name }
-                     else
+          {name: name}
+        else
 
-                       { firstname: firstname, lastname: lastname }
-                     end
+          {firstname: firstname, lastname: lastname}
+        end
         {
-          address1: @data['Address1'],
-          address2: @data['Address2'],
-          city: @data['City'],
-          zipcode: @data['Zip'],
-          phone: @data['Phone'],
+          address1: @data["Address1"],
+          address2: @data["Address2"],
+          city: @data["City"],
+          zipcode: @data["Zip"],
+          phone: @data["Phone"],
           country: country,
-          state: state,
+          state: state
         }.merge(name_attrs)
       end
     end

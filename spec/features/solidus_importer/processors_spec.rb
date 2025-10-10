@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Set up a some processors' do
+RSpec.describe "Set up a some processors" do
   subject(:process_import) do
     SolidusImporter::ProcessImport.new(
       import_source,
@@ -12,15 +12,15 @@ RSpec.describe 'Set up a some processors' do
 
   let(:processor_create_user) do
     ->(context) {
-      user = Spree::User.new(email: context[:data]['Email'])
-      user.password = 'a very secure password'
+      user = Spree::User.new(email: context[:data]["Email"])
+      user.password = "a very secure password"
       context.merge!(success: user.save, user: user)
     }
   end
   let(:processor_check_domain) do
     ->(context) {
       user = context[:user].reload
-      context[:valid] = user.email.end_with?('@acme.com')
+      context[:valid] = user.email.end_with?("@acme.com")
     }
   end
   let(:import_source) { create(:solidus_importer_import_customers) }
@@ -48,7 +48,7 @@ RSpec.describe 'Set up a some processors' do
     allow(importer).to receive(:after_import).and_call_original
   end
 
-  it 'creates 2 users and check the result' do
+  it "creates 2 users and check the result" do
     expect { process_import }.to change(Spree::User, :count).from(0).to(2)
     expect(importer).to have_received(:after_import).once
     expect(importer.checks).to eq [true, nil, nil, true]

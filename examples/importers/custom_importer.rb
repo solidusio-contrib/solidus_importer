@@ -9,9 +9,9 @@ module SolidusImporter
     class CustomImporter < ::SolidusImporter::BaseImporter
       def after_import(context)
         ActionMailer::Base.mail(
-          from: 'some_email',
-          to: 'some_email_2',
-          subject: 'Import finished',
+          from: "some_email",
+          to: "some_email_2",
+          subject: "Import finished",
           body: "Ending context:\n#{context.to_json}"
         ).deliver_now
       end

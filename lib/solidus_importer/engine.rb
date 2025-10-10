@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'spree/core'
-require 'solidus_importer'
+require "spree/core"
+require "solidus_importer"
 
 module SolidusImporter
   class Engine < Rails::Engine
@@ -9,9 +9,9 @@ module SolidusImporter
 
     isolate_namespace ::Spree
 
-    engine_name 'solidus_importer'
+    engine_name "solidus_importer"
 
-    initializer 'solidus_importer.environment', before: :load_config_initializers do |_app|
+    initializer "solidus_importer.environment", before: :load_config_initializers do |_app|
       SolidusImporter::Config = SolidusImporter::Configuration.new
     end
 

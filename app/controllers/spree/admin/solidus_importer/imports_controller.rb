@@ -10,9 +10,9 @@ module Spree
         def index
           @search = ::SolidusImporter::Import.ransack(params[:q])
           @imports = @search.result(distinct: true)
-                            .page(params[:page])
-                            .per(params[:per_page] || Spree::Config[:orders_per_page])
-                            .order(id: :desc)
+            .page(params[:page])
+            .per(params[:per_page] || Spree::Config[:orders_per_page])
+            .order(id: :desc)
         end
 
         def show

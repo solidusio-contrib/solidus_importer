@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'line_item'
+require_relative "line_item"
 
 module SolidusImporter
   module Processors
@@ -26,15 +26,15 @@ module SolidusImporter
       end
 
       def price
-        @data['Lineitem price'].to_f
+        @data["Lineitem price"].to_f
       end
 
       def quantity
-        @data['Lineitem quantity'].to_i
+        @data["Lineitem quantity"].to_i
       end
 
       def financial_status
-        @data['Financial Status'].to_s.inquiry
+        @data["Financial Status"].to_s.inquiry
       end
 
       def payment_attributes
@@ -46,8 +46,8 @@ module SolidusImporter
 
       def payment_method
         @payment_method ||= Spree::PaymentMethod.find_or_initialize_by(
-          name: 'SolidusImporter PaymentMethod',
-          type: 'Spree::PaymentMethod::Check'
+          name: "SolidusImporter PaymentMethod",
+          type: "Spree::PaymentMethod::Check"
         ).tap(&:save)
       end
     end

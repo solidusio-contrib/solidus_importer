@@ -14,7 +14,7 @@ module SolidusImporter
       private
 
       def prepare_image
-        attachment = @data['Variant Image']
+        attachment = @data["Variant Image"]
         image = Spree::Image.new
 
         if attachment.match?(/^http/)
@@ -36,7 +36,7 @@ module SolidusImporter
       end
 
       def variant_image?
-        @variant_image ||= @data['Variant Image'].present?
+        @variant_image ||= @data["Variant Image"].present?
       end
     end
   end

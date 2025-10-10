@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module SolidusImporter
   ##
@@ -22,7 +22,7 @@ module SolidusImporter
 
       scan_required = force_scan.nil? ? @import.created? : force_scan
       @import.update(state: :processing)
-      initial_context = scan_required ? scan : { success: true }
+      initial_context = scan_required ? scan : {success: true}
       initial_context = @importer.before_import(initial_context)
       unless @import.failed?
         rows = process_rows(initial_context)
@@ -31,7 +31,7 @@ module SolidusImporter
         state = :completed if rows.zero?
         state = :failed if ending_context[:success] == false
 
-        messages = ending_context[:messages].try(:join, ', ')
+        messages = ending_context[:messages].try(:join, ", ")
 
         @import.update(state: state, messages: messages)
       end
@@ -53,7 +53,7 @@ module SolidusImporter
       data = CSV.parse(
         Paperclip.io_adapters.for(@import.file).read.force_encoding(Encoding::UTF_8),
         headers: true,
-        encoding: 'UTF-8',
+        encoding: "UTF-8",
         header_converters: ->(h) { h.strip }
       )
       prepare_rows(data)
@@ -73,10 +73,10 @@ module SolidusImporter
         data.each do |row|
           @import.rows << ::SolidusImporter::Row.new(data: row.to_h)
         end
-        { success: true }
+        {success: true}
       else
-        @import.update(state: :failed, messages: messages.join(', '))
-        { success: false, messages: messages.join(', ') }
+        @import.update(state: :failed, messages: messages.join(", "))
+        {success: false, messages: messages.join(", ")}
       end
     end
 
@@ -89,7 +89,7 @@ module SolidusImporter
     end
 
     def validate!
-      raise ::SolidusImporter::Exception, 'Valid import entity required' if !@import || !@import.valid?
+      raise ::SolidusImporter::Exception, "Valid import entity required" if !@import || !@import.valid?
       raise ::SolidusImporter::Exception, "No importer found for #{@import.import_type} type" if !@importer
     end
   end

@@ -33,7 +33,7 @@ module SolidusImporter
 
         if completed_at
           order.completed_at = completed_at
-          order.state = 'complete'
+          order.state = "complete"
           order.save!
         end
 

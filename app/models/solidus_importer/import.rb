@@ -2,27 +2,27 @@
 
 module SolidusImporter
   class Import < ApplicationRecord
-    self.table_name = 'solidus_importer_imports'
+    self.table_name = "solidus_importer_imports"
 
     attr_accessor :importer
 
     has_many :rows,
-      class_name: 'SolidusImporter::Row',
+      class_name: "SolidusImporter::Row",
       inverse_of: :import,
       dependent: :destroy
-    if Rails.gem_version >= Gem::Version.new('7.1')
+    if Rails.gem_version >= Gem::Version.new("7.1")
       enum :state, {
-        created: 'created',
-        processing: 'processing',
-        failed: 'failed',
-        completed: 'completed'
+        created: "created",
+        processing: "processing",
+        failed: "failed",
+        completed: "completed"
       }
     else
       enum state: {
-        created: 'created',
-        processing: 'processing',
-        failed: 'failed',
-        completed: 'completed'
+        created: "created",
+        processing: "processing",
+        failed: "failed",
+        completed: "completed"
       }
     end
 
@@ -42,9 +42,9 @@ module SolidusImporter
     end
 
     def import_file=(path)
-      raise SolidusImporter::Exception, 'Existing file required' if !path || !File.exist?(path)
+      raise SolidusImporter::Exception, "Existing file required" if !path || !File.exist?(path)
 
-      self.file = File.open(path, 'r')
+      self.file = File.open(path, "r")
     end
 
     def self.ransackable_attributes(_auth_object = nil)

@@ -18,8 +18,8 @@ module SolidusImporter
 
       def options
         @options ||= {
-          type_taxonomy: Spree::Taxonomy.find_or_create_by(name: 'Type'),
-          tags_taxonomy: Spree::Taxonomy.find_or_create_by(name: 'Tags')
+          type_taxonomy: Spree::Taxonomy.find_or_create_by(name: "Type"),
+          tags_taxonomy: Spree::Taxonomy.find_or_create_by(name: "Tags")
         }
       end
 
@@ -48,13 +48,13 @@ module SolidusImporter
       end
 
       def tags
-        return [] unless @data['Tags'].presence
+        return [] unless @data["Tags"].presence
 
-        @data['Tags'].split(',').map(&:strip)
+        @data["Tags"].split(",").map(&:strip)
       end
 
       def type
-        @data['Type'].presence
+        @data["Type"].presence
       end
     end
   end

@@ -6,7 +6,7 @@ module SolidusImporter
       def call(context)
         @data = context[:data]
 
-        return if @data['Lineitem sku'].blank?
+        return if @data["Lineitem sku"].blank?
 
         order = context.fetch(:order, {})
         order[:line_items_attributes] = line_items_attributes
@@ -18,9 +18,9 @@ module SolidusImporter
 
       def line_items_attributes
         {
-          sku: @data['Lineitem sku'],
-          quantity: @data['Lineitem quantity'],
-          price: @data['Lineitem price']
+          sku: @data["Lineitem sku"],
+          quantity: @data["Lineitem quantity"],
+          price: @data["Lineitem price"]
         }
       end
     end

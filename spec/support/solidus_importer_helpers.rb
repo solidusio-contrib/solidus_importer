@@ -2,7 +2,7 @@
 
 module SolidusImporterHelpers
   def solidus_importer_fixture_path(fixture)
-    File.join(__dir__, '../fixtures/solidus_importer', fixture)
+    File.join(__dir__, "../fixtures/solidus_importer", fixture)
   end
 end
 

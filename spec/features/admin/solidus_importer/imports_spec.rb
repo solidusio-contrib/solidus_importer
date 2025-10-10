@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Imports', type: :feature do
+RSpec.describe "Imports", type: :feature do
   stub_authorization!
 
-  describe 'New import form' do
+  describe "New import form" do
     subject(:described_path) { spree.new_admin_solidus_importer_import_path }
 
     before { visit described_path }
@@ -20,14 +20,14 @@ RSpec.describe 'Imports', type: :feature do
     end
   end
 
-  describe 'Import create' do
+  describe "Import create" do
     subject(:described_path) { spree.new_admin_solidus_importer_import_path }
 
     let(:shipping_method) { create :shipping_method }
 
     let(:import_file) { page.find 'input[name="solidus_importer_import[file]"]' }
     let(:import_button) { page.find '[type="submit"]' }
-    let(:products_csv_file) { solidus_importer_fixture_path('products.csv') }
+    let(:products_csv_file) { solidus_importer_fixture_path("products.csv") }
     let(:import_type) { "products" }
 
     before do
@@ -40,8 +40,8 @@ RSpec.describe 'Imports', type: :feature do
       perform_enqueued_jobs { import_button.click }
     end
 
-    it 'creates a new import' do
-      expect(page).to have_content('Import has been successfully created!')
+    it "creates a new import" do
+      expect(page).to have_content("Import has been successfully created!")
 
       perform_enqueued_jobs
 
@@ -50,11 +50,11 @@ RSpec.describe 'Imports', type: :feature do
       end
     end
 
-    context 'when there are failing rows' do
-      let(:products_csv_file) { solidus_importer_fixture_path('invalid_product.csv') }
+    context "when there are failing rows" do
+      let(:products_csv_file) { solidus_importer_fixture_path("invalid_product.csv") }
 
-      it 'shows success/total row counts' do
-        expect(page).to have_content('Import has been successfully created!')
+      it "shows success/total row counts" do
+        expect(page).to have_content("Import has been successfully created!")
 
         perform_enqueued_jobs
 
@@ -64,32 +64,32 @@ RSpec.describe 'Imports', type: :feature do
       end
     end
 
-    context 'when no import type is selected' do
+    context "when no import type is selected" do
       let(:import_type) { nil }
 
-      it 'fails creating a new import' do
+      it "fails creating a new import" do
         expect(page).to have_content("Import type can't be blank")
       end
     end
 
-    context 'when the wrong import type is selected', skip: 'Not implemented yet' do
+    context "when the wrong import type is selected", skip: "Not implemented yet" do
       let(:import_type) { "orders" }
 
-      it 'fails creating a new import' do
-        expect(page).to have_content('Import failed!')
+      it "fails creating a new import" do
+        expect(page).to have_content("Import failed!")
       end
     end
 
-    context 'when an invalid CSV file is selected', skip: 'Not implemented yet' do
-      let(:products_csv_file) { 'unknow-file.csv' }
+    context "when an invalid CSV file is selected", skip: "Not implemented yet" do
+      let(:products_csv_file) { "unknow-file.csv" }
 
-      it 'fails creating a new import' do
-        expect(page).to have_content('Import failed!')
+      it "fails creating a new import" do
+        expect(page).to have_content("Import failed!")
       end
     end
   end
 
-  describe 'Imports index' do
+  describe "Imports index" do
     subject(:described_path) { spree.admin_solidus_importer_imports_path }
 
     let(:imports) {}
@@ -99,11 +99,11 @@ RSpec.describe 'Imports', type: :feature do
       visit described_path
     end
 
-    it 'loads the imports listing' do
-      expect(page.body).to include('No Import found')
+    it "loads the imports listing" do
+      expect(page.body).to include("No Import found")
     end
 
-    context 'with some imports' do
+    context "with some imports" do
       let(:imports) do
         [
           create(:solidus_importer_import_customers),
@@ -112,11 +112,11 @@ RSpec.describe 'Imports', type: :feature do
         ]
       end
 
-      it { expect(page).to have_css('.solidus_importer_import', count: imports.size) }
+      it { expect(page).to have_css(".solidus_importer_import", count: imports.size) }
     end
   end
 
-  describe 'Imports show' do
+  describe "Imports show" do
     subject(:described_path) { spree.admin_solidus_importer_import_path(import) }
 
     let(:import) { create(:solidus_importer_import_customers) }
@@ -127,15 +127,15 @@ RSpec.describe 'Imports', type: :feature do
       visit described_path
     end
 
-    it 'loads the imports details' do
+    it "loads the imports details" do
       expect(page).to have_css('[data-hook="admin_solidus_importer_imports_show"]')
-      expect(page.body).to include('No Row found')
+      expect(page.body).to include("No Row found")
     end
 
-    context 'with some rows' do
+    context "with some rows" do
       let(:rows) { create_list(:solidus_importer_row_customer, 3, import: import) }
 
-      it { expect(page).to have_css('.solidus_importer_import_row', count: rows.size) }
+      it { expect(page).to have_css(".solidus_importer_import_row", count: rows.size) }
     end
   end
 end
