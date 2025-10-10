@@ -38,14 +38,18 @@ module SolidusImporter
         end
 
         # Really ensure that the order totals & states are correct
-        updater = SolidusImporter::OrderUpdater.new(order)
-        updater.update
+        tax_adjuster_class = Spree::Config.tax_adjuster_class
+        Spree::Config.tax_adjuster_class = SolidusImporter::Tax::NullOrderAdjuster
+
+        order.updater.update
         if shipments_attrs.present?
           order.shipments.each_with_index do |shipment, index|
             shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?
           end
         end
         order.reload
+
+        Spree::Config.tax_adjuster_class = tax_adjuster_class
       end
     end
   end

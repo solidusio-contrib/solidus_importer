@@ -10,13 +10,21 @@ module SolidusImporter
       class_name: 'SolidusImporter::Row',
       inverse_of: :import,
       dependent: :destroy
-
-    enum state: {
-      created: 'created',
-      processing: 'processing',
-      failed: 'failed',
-      completed: 'completed'
-    }
+    if Rails.gem_version >= Gem::Version.new('7.1')
+      enum :state, {
+        created: 'created',
+        processing: 'processing',
+        failed: 'failed',
+        completed: 'completed'
+      }
+    else
+      enum state: {
+        created: 'created',
+        processing: 'processing',
+        failed: 'failed',
+        completed: 'completed'
+      }
+    end
 
     has_attached_file :file
 
