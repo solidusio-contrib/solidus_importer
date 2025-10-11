@@ -22,6 +22,8 @@ end
 # See https://github.com/bundler/bundler/issues/6677
 gem "rails", ">0.a"
 
+gem "state_machines", "0.6.0"
+
 # Provides basic authentication functionality for testing parts of your engine
 gem "solidus_auth_devise"
 
