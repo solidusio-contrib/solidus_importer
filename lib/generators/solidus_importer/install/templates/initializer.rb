@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'solidus_importer/csv_format_validators/empty_headers'
+require "solidus_importer/csv_format_validators/empty_headers"
 
 SolidusImporter.configure do |config|
   # TODO: Remember to change this with the actual preferences you have implemented!

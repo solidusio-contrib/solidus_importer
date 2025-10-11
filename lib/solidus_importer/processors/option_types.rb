@@ -28,16 +28,16 @@ module SolidusImporter
 
       def option_type_names
         @option_type_names ||= @data.values_at(
-          'Option1 Name',
-          'Option2 Name',
-          'Option3 Name'
+          "Option1 Name",
+          "Option2 Name",
+          "Option3 Name"
         ).compact
       end
 
       def option_types?
         # NOTE: according to https://help.shopify.com/en/manual/products/import-export
         # when `Option Name1` is equal to 'Title`, means that product has no variants.
-        (@data['Option1 Name'] != 'Title') && option_type_names.any?
+        (@data["Option1 Name"] != "Title") && option_type_names.any?
       end
     end
   end

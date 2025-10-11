@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe SolidusImporter::ProcessRow do
   subject(:described_instance) { described_class.new(importer, row) }
@@ -8,14 +8,14 @@ RSpec.describe SolidusImporter::ProcessRow do
   let(:importer) {}
   let(:row) {}
 
-  it { expect { described_instance }.to raise_error(SolidusImporter::Exception, 'No importer defined') }
+  it { expect { described_instance }.to raise_error(SolidusImporter::Exception, "No importer defined") }
 
-  context 'with an importer' do
-    let(:importer) { instance_double('AnImporter') }
+  context "with an importer" do
+    let(:importer) { instance_double("AnImporter") }
 
-    it { expect { described_instance }.to raise_error(SolidusImporter::Exception, 'Invalid row type') }
+    it { expect { described_instance }.to raise_error(SolidusImporter::Exception, "Invalid row type") }
 
-    context 'with a row' do
+    context "with a row" do
       let(:row) { SolidusImporter::Row.new }
 
       it { expect(described_instance).to be_instance_of(described_class) }
@@ -30,7 +30,7 @@ RSpec.describe SolidusImporter::ProcessRow do
     let(:import) { create :solidus_importer_import_customers }
     let(:row) { create :solidus_importer_row_customer, import: import }
 
-    context 'when a processor raises an exception' do
+    context "when a processor raises an exception" do
       let(:importer) {
         instance_double(
           SolidusImporter::BaseImporter,

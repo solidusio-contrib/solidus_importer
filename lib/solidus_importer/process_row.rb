@@ -15,7 +15,7 @@ module SolidusImporter
       context = initial_context.dup.merge!(row_id: @row.id, importer: @importer, data: @row.data)
       @importer.processors.each do |processor|
         processor.call(context)
-      rescue StandardError => e
+      rescue => e
         context.merge!(success: false, messages: e.message) # rubocop:disable Performance/RedundantMerge
         SolidusImporter::Config.row_exception_handler.call(e, context)
         break
@@ -40,8 +40,8 @@ module SolidusImporter
     end
 
     def validate!
-      raise SolidusImporter::Exception, 'No importer defined' if !@importer
-      raise SolidusImporter::Exception, 'Invalid row type' if !@row || !@row.is_a?(SolidusImporter::Row)
+      raise SolidusImporter::Exception, "No importer defined" if !@importer
+      raise SolidusImporter::Exception, "Invalid row type" if !@row || !@row.is_a?(SolidusImporter::Row)
     end
   end
 end

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Import rows', type: :feature do
+RSpec.describe "Import rows", type: :feature do
   stub_authorization!
 
-  describe 'Imports show' do
+  describe "Imports show" do
     subject(:described_path) do
       spree.admin_solidus_importer_import_import_row_path(import_id: import.id, id: row.id)
     end
@@ -21,9 +21,9 @@ RSpec.describe 'Import rows', type: :feature do
       visit described_path
     end
 
-    it 'loads the import row details' do
+    it "loads the import row details" do
       expect(page).to have_css('[data-hook="admin_solidus_importer_import_rows_show"]')
-      expect(page).to have_css('.import_row_attribute', count: row.data.keys.size)
+      expect(page).to have_css(".import_row_attribute", count: row.data.keys.size)
       expect(page.body).to include(row.state)
     end
   end

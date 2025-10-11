@@ -7,7 +7,7 @@ module SolidusImporter
     retry_on ActiveRecord::Deadlocked
 
     def perform(source, import_type = nil)
-      raise ArgumentError, 'Missing import source' unless source
+      raise ArgumentError, "Missing import source" unless source
 
       if source.is_a?(Integer)
         perform_import_from_model(source)

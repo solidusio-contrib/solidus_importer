@@ -2,27 +2,27 @@
 
 module SolidusImporter
   class Row < ApplicationRecord
-    self.table_name = 'solidus_importer_rows'
+    self.table_name = "solidus_importer_rows"
 
     belongs_to :import,
-      class_name: 'SolidusImporter::Import',
+      class_name: "SolidusImporter::Import",
       inverse_of: :rows
 
-    if Rails.gem_version >= Gem::Version.new('7.1')
+    if Rails.gem_version >= Gem::Version.new("7.1")
       serialize :data, coder: JSON
       enum :state, {
-        created: 'created',
-        processing: 'processing',
-        failed: 'failed',
-        completed: 'completed'
+        created: "created",
+        processing: "processing",
+        failed: "failed",
+        completed: "completed"
       }
     else
       serialize :data, JSON
       enum state: {
-        created: 'created',
-        processing: 'processing',
-        failed: 'failed',
-        completed: 'completed'
+        created: "created",
+        processing: "processing",
+        failed: "failed",
+        completed: "completed"
       }
     end
 

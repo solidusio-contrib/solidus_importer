@@ -19,7 +19,7 @@ module SolidusImporter
       private
 
       def check_data
-        raise SolidusImporter::Exception, 'Missing required key: "Email"' if @data['Email'].blank?
+        raise SolidusImporter::Exception, 'Missing required key: "Email"' if @data["Email"].blank?
       end
 
       def user
@@ -27,7 +27,7 @@ module SolidusImporter
       end
 
       def prepare_user
-        Spree::User.find_or_initialize_by(email: @data['Email']) do |u|
+        Spree::User.find_or_initialize_by(email: @data["Email"]) do |u|
           u.password = options[:password_method].call(u)
         end
       end

@@ -14,8 +14,8 @@ module SolidusImporter
       private
 
       def prepare_image
-        attachment = URI.parse(@data['Image Src']).open
-        Spree::Image.new(attachment: attachment, alt: @data['Image Alt Text'], position: @data["Image Position"])
+        attachment = URI.parse(@data["Image Src"]).open
+        Spree::Image.new(attachment: attachment, alt: @data["Image Alt Text"], position: @data["Image Position"])
       end
 
       def process_images(product)
@@ -23,7 +23,7 @@ module SolidusImporter
       end
 
       def product_image?
-        @product_image ||= @data['Image Src'].present?
+        @product_image ||= @data["Image Src"].present?
       end
     end
   end

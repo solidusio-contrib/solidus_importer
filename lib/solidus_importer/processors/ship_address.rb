@@ -6,7 +6,7 @@ module SolidusImporter
       def call(context)
         @data = context[:data]
 
-        return if @data['Shipping Address1'].blank?
+        return if @data["Shipping Address1"].blank?
 
         order = context.fetch(:order, {})
 
@@ -18,19 +18,19 @@ module SolidusImporter
       private
 
       def country_code
-        @data['Shipping Country Code']
+        @data["Shipping Country Code"]
       end
 
       def province_code
-        @data['Shipping Province Code']
+        @data["Shipping Province Code"]
       end
 
       def firstname
-        @data['Shipping First Name']
+        @data["Shipping First Name"]
       end
 
       def lastname
-        @data['Shipping Last Name']
+        @data["Shipping Last Name"]
       end
 
       def name
@@ -39,21 +39,21 @@ module SolidusImporter
 
       def ship_address_attributes
         name_attrs = if SolidusImporter.combined_first_and_last_name_in_address?
-                       { name: name }
-                     else
+          {name: name}
+        else
 
-                       { firstname: firstname, lastname: lastname }
-                     end
+          {firstname: firstname, lastname: lastname}
+        end
 
         {
-          address1: @data['Shipping Address1'],
-          address2: @data['Shipping Address2'],
-          city: @data['Shipping City'],
-          company: @data['Shipping Company'],
-          zipcode: @data['Shipping Zip'],
-          phone: @data['Shipping Phone'],
+          address1: @data["Shipping Address1"],
+          address2: @data["Shipping Address2"],
+          city: @data["Shipping City"],
+          company: @data["Shipping Company"],
+          zipcode: @data["Shipping Zip"],
+          phone: @data["Shipping Phone"],
           country: country,
-          state: state,
+          state: state
         }.merge(name_attrs)
       end
 

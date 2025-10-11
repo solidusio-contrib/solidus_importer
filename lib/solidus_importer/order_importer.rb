@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 module SolidusImporter
   class OrderImporter < BaseImporter
     attr_accessor :orders
@@ -37,7 +35,7 @@ module SolidusImporter
       orders.each do |_, params|
         user = params.delete(:user)
         SolidusImporter::SpreeCoreImporterOrder.import(user, params)
-      rescue StandardError => e
+      rescue => e
         context[:messages] ||= []
         context[:messages] << e.message
         context[:success] = false

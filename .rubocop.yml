@@ -1,17 +1,5 @@
 require:
-  - solidus_dev_support/rubocop
+  - standard
 
-AllCops:
-  NewCops: disable
-
-Rails/SkipsModelValidations:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Enabled: false
-
-RSpec/MultipleMemoizedHelpers:
-  Enabled: false
-
-RSpec/NestedGroups:
-  Max: 4
+inherit_gem:
+  standard: config/base.yml

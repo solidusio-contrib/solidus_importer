@@ -18,7 +18,7 @@ module SolidusImporter
       private
 
       def cost
-        @data['Shipping Line Price'].to_f
+        @data["Shipping Line Price"].to_f
       end
 
       def inventory_units
@@ -26,7 +26,7 @@ module SolidusImporter
 
         return [] if sku.blank?
 
-        [{ sku: sku }]
+        [{sku: sku}]
       end
 
       def line_items_attributes
@@ -44,15 +44,15 @@ module SolidusImporter
       end
 
       def shipped_at
-        Time.zone.now if fulfillment_status == 'fulfilled'
+        Time.zone.now if fulfillment_status == "fulfilled"
       end
 
       def fulfillment_status
-        @data['Lineitem fulfillment status']
+        @data["Lineitem fulfillment status"]
       end
 
       def shipping_method_name
-        @data['Shipping Line Title'] || 'SolidusImporter ShippingMethod'
+        @data["Shipping Line Title"] || "SolidusImporter ShippingMethod"
       end
 
       def shipping_method
@@ -68,19 +68,19 @@ module SolidusImporter
 
       def calculator
         @calculator ||= Spree::Calculator::FlatRate.find_or_create_by(
-          preferences: { amount: 0 }
+          preferences: {amount: 0}
         )
       end
 
       def shipping_category
         Spree::ShippingCategory.find_or_create_by(
-          name: 'SolidusImporter ShippingCategory'
+          name: "SolidusImporter ShippingCategory"
         )
       end
 
       def stock_location
         @stock_location ||= Spree::StockLocation.find_or_create_by(
-          name: 'SolidusImporter StockLocation'
+          name: "SolidusImporter StockLocation"
         )
       end
     end

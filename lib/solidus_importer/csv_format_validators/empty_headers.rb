@@ -7,7 +7,7 @@ module SolidusImporter
         headers = csv_table.headers
         return unless headers.blank? || !headers.exclude?(nil)
 
-        'Invalid headers'
+        "Invalid headers"
       end
     end
   end

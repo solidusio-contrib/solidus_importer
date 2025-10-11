@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe SolidusImporter::Processors::Base do
   subject(:described_instance) { described_class.new }

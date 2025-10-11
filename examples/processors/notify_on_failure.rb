@@ -11,9 +11,9 @@ module SolidusImporter
         return if context[:success]
 
         ActionMailer::Base.mail(
-          from: 'some_email',
-          to: 'some_email_2',
-          subject: 'Row process error',
+          from: "some_email",
+          to: "some_email_2",
+          subject: "Row process error",
           body: "Row context:\n#{context.to_json}"
         ).deliver_now
       end
