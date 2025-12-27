@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'csv_format_validators/empty_headers'
+
 module SolidusImporter
   class Configuration < Spree::Preferences::Configuration
     preference :solidus_importer, :hash, default: {
@@ -67,7 +69,7 @@ module SolidusImporter
     #     end
     #   end
     # ]
-    preference :csv_format_validators, :array, default: []
+    preference :csv_format_validators, :array, default: [::SolidusImporter::CsvFormatValidators::EmptyHeaders]
   end
 
   class << self
