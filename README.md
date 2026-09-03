@@ -125,7 +125,7 @@ To define your own processors (in this example for products), add to the spree
 initializer:
 
 ```ruby
-SolidusImporter::Config[:solidus_importer] = {
+SolidusImporter::Config.solidus_importer = {
   products: {
     importer: SolidusImporter::Importers::Products,
     processors: [
