@@ -11,7 +11,7 @@ module Spree
           @search = ::SolidusImporter::Import.ransack(params[:q])
           @imports = @search.result(distinct: true)
             .page(params[:page])
-            .per(params[:per_page] || Spree::Config[:orders_per_page])
+            .per(params[:per_page] || Spree::Config.orders_per_page)
             .order(id: :desc)
         end
 
